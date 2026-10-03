@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net: Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidRsvp(data) {
+      return data.keys().hasAll(['id', 'fullName', 'phoneNumber', 'willAttend', 'adultsCount', 'submittedAt', 'eCardCode']) &&
+             data.keys().hasOnly(['id', 'fullName', 'phoneNumber', 'willAttend', 'adultsCount', 'childrenCount', 'submittedAt', 'eCardCode', 'notes']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 100 &&
+             data.phoneNumber is string && data.phoneNumber.size() > 0 && data.phoneNumber.size() <= 30 &&
+             (data.willAttend == 'yes' || data.willAttend == 'no') &&
+             data.adultsCount is number && data.adultsCount >= 0 && data.adultsCount <= 20 &&
+             (!('childrenCount' in data) || (data.childrenCount is number && data.childrenCount >= 0 && data.childrenCount <= 20)) &&
+             data.submittedAt is string && data.submittedAt.size() <= 60 &&
+             data.eCardCode is string && data.eCardCode.size() <= 30 &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500));
+    }
+
+    // RSVP Collection for Jacinta & Maurice Wedding
+    match /rsvps/{rsvpId} {
+      allow read: if true;
+      allow create: if isValidId(rsvpId) && isValidRsvp(incoming()) && incoming().id == rsvpId;
+      allow update: if isValidId(rsvpId) && isValidRsvp(incoming()) && incoming().id == existing().id;
+      allow delete: if isValidId(rsvpId);
+    }
+  }
+}

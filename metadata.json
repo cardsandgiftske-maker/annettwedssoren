@@ -1,0 +1,8 @@
+{
+  "name": "Annette and Søren Wedding Invitation",
+  "description": "An elegant, premium dark-mode wedding invitation and RSVP portal for Annett and Søren\u0027s wedding, featuring schedule, dress code, maps, and e-card generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
