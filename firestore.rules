@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default Deny All: Prevent unauthorized data exposure across all collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Validation helper for RSVP documents
+    function isValidRsvp(data) {
+      return data.fullName is string &&
+             data.fullName.size() >= 1 && data.fullName.size() <= 100 &&
+             data.phoneNumber is string &&
+             data.phoneNumber.size() >= 5 && data.phoneNumber.size() <= 30 &&
+             data.willAttend in ['yes', 'no'] &&
+             data.eCardCode is string && data.eCardCode.size() <= 20 &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500)) &&
+             (!('songRequest' in data) || (data.songRequest is string && data.songRequest.size() <= 200));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // RSVPs Collection Security Rules:
+    // - Unauthenticated guests can ONLY submit (create) a validated RSVP.
+    // - Guests CANNOT list or browse the RSVP database (protects guest privacy & PII).
+    // - Guests CANNOT update or delete existing RSVP records directly.
+    // - Authenticated Admins have management access.
+    match /rsvps/{rsvpId} {
+      allow get: if request.auth != null;
+      allow list: if request.auth != null;
+      allow create: if isValidId(rsvpId) && isValidRsvp(request.resource.data);
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+  }
+}
