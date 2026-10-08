@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Italiana&family=Inter:wght@300;400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", "Italiana", Georgia, serif;
+  --font-script: "Pinyon Script", cursive;
+  
+  --color-maroon-50: #faf2f3;
+  --color-maroon-100: #f3e2e5;
+  --color-maroon-200: #eacacc;
+  --color-maroon-300: #dbabae;
+  --color-maroon-400: #c57e84;
+  --color-maroon-500: #aa5159;
+  --color-maroon-600: #8f3b43;
+  --color-maroon-700: #6d1f32;
+  --color-maroon-800: #5a1d22;
+  --color-maroon-850: #450e12;
+  --color-maroon-900: #33070b;
+  --color-maroon-950: #1c0205;
+  
+  --color-emerald-50: #f0fdf4;
+  --color-emerald-100: #dcfce7;
+  --color-emerald-200: #bbf7d0;
+  --color-emerald-300: #86efac;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #0f5132;
+  --color-emerald-700: #0a4027;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-950: #022c22;
+
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #eab308;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #b8860b;
+  --color-gold-700: #855802;
+}
+
+/* Custom Metallic Gold Utilities */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #f5d77f 0%, #c9a227 40%, #e8c86b 70%, #997510 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-light {
+  background: linear-gradient(135deg, #fff3c4 0%, #e2c062 50%, #f7e399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #e5c358 0%, #c9a227 40%, #9e7a18 100%);
+}
+
+.bg-gold-shimmer {
+  background: linear-gradient(110deg, #b8860b 0%, #f5d77f 25%, #c9a227 50%, #f5d77f 75%, #9e7a18 100%);
+  background-size: 200% 100%;
+  animation: shimmer 8s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.border-gold-gradient {
+  border-image: linear-gradient(135deg, #f5d77f, #c9a227, #855802) 1;
+}
+
+/* Luxury Paper Texture Filter */
+.bg-paper-texture {
+  background-color: #fdfbf7;
+  background-image: radial-gradient(#6d1f32 0.4px, transparent 0.4px), radial-gradient(#0f5132 0.4px, #fdfbf7 0.4px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  background-color: #fdfbf7;
+}
+
+/* Luxury Card Shadow & Frame */
+.stationery-card {
+  box-shadow: 0 20px 50px -15px rgba(51, 7, 11, 0.12), 0 0 0 1px rgba(201, 162, 39, 0.25);
+}
+
+.stationery-card-emerald {
+  box-shadow: 0 20px 50px -15px rgba(2, 44, 34, 0.2), 0 0 0 1px rgba(201, 162, 39, 0.3);
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #33070b;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a227;
+  border-radius: 4px;
+}
