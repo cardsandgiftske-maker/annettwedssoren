@@ -320,7 +320,7 @@ export default function RsvpForm() {
                   <div className="flex items-start gap-2.5">
                     <Baby className="w-4 h-4 text-[#14532D] shrink-0 mt-0.5" />
                     <p className="text-xs text-stone-800 leading-snug">
-                      <strong>Adults-Only Event:</strong> Kindly note that our ceremony and reception are strictly an adults-only celebration. No children allowed.
+                      <strong>Children Protocol:</strong> No children allowed.
                     </p>
                   </div>
                   <div className="flex items-start gap-2.5">
