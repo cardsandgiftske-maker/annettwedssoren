@@ -20,18 +20,18 @@ export default function DressCode() {
 
         {/* Dress Code Card */}
         <div className="bg-white border-2 border-[#C9A227]/60 p-8 md:p-12 rounded-3xl shadow-xl text-center space-y-6 relative overflow-hidden mb-8">
-          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#D9CAAE]" />
+          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#14532D] via-[#D9CAAE] to-[#14532D]" />
 
           <div className="w-16 h-16 rounded-full bg-[#14532D]/10 border border-[#14532D]/20 text-[#14532D] flex items-center justify-center mx-auto shadow-xs">
             <Shirt className="w-8 h-8" />
           </div>
 
-          <div className="inline-block px-6 py-2 bg-gradient-to-r from-[#14532D]/10 via-[#C9A227]/15 to-[#D9CAAE]/40 border border-[#C9A227]/50 rounded-full text-[#14532D] text-xs font-sans font-extrabold uppercase tracking-widest shadow-xs">
+          <div className="inline-block px-6 py-2 bg-[#14532D]/10 border border-[#14532D]/30 rounded-full text-[#14532D] text-xs font-sans font-extrabold uppercase tracking-widest shadow-xs">
             Attire: Formal Elegant
           </div>
 
           <p className="text-stone-700 text-base md:text-lg font-serif italic leading-relaxed max-w-xl mx-auto">
-            We kindly invite our cherished guests to grace our celebration in <strong className="font-semibold text-[#14532D] not-italic">Formal Elegant</strong> attire, reflecting our wedding theme colors of <span className="text-[#14532D] font-bold not-italic">Green</span>, <span className="text-[#B8860B] font-bold not-italic">Gold</span>, and <span className="text-[#855802] font-bold not-italic">Beige</span>.
+            We kindly invite our cherished guests to grace our celebration in <strong className="font-semibold text-[#14532D] not-italic">Formal Elegant</strong> attire, reflecting our wedding theme colors of <span className="text-[#14532D] font-bold not-italic">Green</span> and <span className="text-[#8C7A5B] font-bold not-italic">Beige</span>.
           </p>
 
           <div className="pt-4 border-t border-stone-200 flex items-center justify-center gap-2 text-stone-600 text-xs font-serif italic">
@@ -50,14 +50,14 @@ export default function DressCode() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            {/* 1. Adults Only */}
+            {/* 1. Children Protocol */}
             <div className="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-[#855802] font-sans font-bold text-xs uppercase tracking-wider mb-1.5">
                 <Baby className="w-4 h-4 text-[#855802]" />
-                <span>Adults-Only Event</span>
+                <span>No Children Allowed</span>
               </div>
               <p className="text-xs text-stone-700 font-sans leading-relaxed">
-                While we dearly love children, our ceremony and reception are strictly an adults-only celebration. No children under 18 allowed.
+                No children allowed.
               </p>
             </div>
 
