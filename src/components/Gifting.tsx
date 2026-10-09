@@ -30,9 +30,44 @@ export default function Gifting() {
           </p>
         </div>
 
-        {/* Two Options Grid: M-Pesa & Physical Envelopes */}
+        {/* Two Options Grid: Envelope Blessing & M-Pesa */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          {/* Option 1: MPesa Paybill Card */}
+          {/* Option 1: ENVELOPE BLESSING Card */}
+          <div className="bg-white border-2 border-[#C9A227]/60 p-6 md:p-8 rounded-3xl shadow-xl text-stone-900 relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C9A227] via-[#D9CAAE] to-[#14532D]" />
+
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-[#C9A227]/15 text-[#855802] flex items-center justify-center border border-[#C9A227]/30">
+                  <Mail className="w-6 h-6 text-[#855802]" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-sans font-extrabold tracking-widest text-[#855802]">Option 1</span>
+                  <h3 className="font-serif text-xl md:text-2xl font-bold text-[#14532D]">1. ENVELOPE BLESSING</h3>
+                </div>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5">
+                <div className="flex items-start gap-3">
+                  <Heart className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-serif font-bold text-stone-900 text-base">
+                      In-Person Presentation
+                    </h4>
+                    <p className="text-sm text-stone-700 font-sans leading-relaxed mt-2">
+                      Gift envelopes can be presented in person at the reception venue during the speeches and gifts session.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-stone-200 text-center text-xs text-stone-600 font-serif italic">
+              Thank you dearly for celebrating with us and for your warm blessings!
+            </div>
+          </div>
+
+          {/* Option 2: MPesa Paybill Card */}
           <div className="bg-white border-2 border-[#C9A227]/60 p-6 md:p-8 rounded-3xl shadow-xl text-stone-900 relative overflow-hidden flex flex-col justify-between">
             <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#14532D]" />
 
@@ -42,8 +77,8 @@ export default function Gifting() {
                   <Gift className="w-6 h-6 text-[#14532D]" />
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase font-sans font-extrabold tracking-widest text-[#855802]">Option 1</span>
-                  <h3 className="font-serif text-xl md:text-2xl font-bold text-[#14532D]">M-PESA Gifting</h3>
+                  <span className="text-[10px] uppercase font-sans font-extrabold tracking-widest text-[#855802]">Option 2</span>
+                  <h3 className="font-serif text-xl md:text-2xl font-bold text-[#14532D]">2. M-PESA GIFTING</h3>
                 </div>
               </div>
 
@@ -89,50 +124,6 @@ export default function Gifting() {
             <p className="mt-6 pt-4 border-t border-stone-200 text-center text-xs text-stone-500 font-sans">
               Instant mobile transfer via Safaricom M-Pesa.
             </p>
-          </div>
-
-          {/* Option 2: Gift Envelopes Card */}
-          <div className="bg-white border-2 border-[#C9A227]/60 p-6 md:p-8 rounded-3xl shadow-xl text-stone-900 relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C9A227] via-[#D9CAAE] to-[#14532D]" />
-
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-[#C9A227]/15 text-[#855802] flex items-center justify-center border border-[#C9A227]/30">
-                  <Mail className="w-6 h-6 text-[#855802]" />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-sans font-extrabold tracking-widest text-[#855802]">Option 2</span>
-                  <h3 className="font-serif text-xl md:text-2xl font-bold text-[#14532D]">Gift Envelopes</h3>
-                </div>
-              </div>
-
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5 space-y-4">
-                <div className="flex items-start gap-3">
-                  <Heart className="w-5 h-5 text-[#C9A227] shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-serif font-bold text-stone-900 text-base">
-                      Physical Envelope Blessing Box
-                    </h4>
-                    <p className="text-xs text-stone-600 font-sans leading-relaxed mt-1">
-                      For guests wishing to present their congratulations, monetary blessings, or handwritten cards in person, a beautifully adorned envelope collection box will be available at the reception entrance lounge.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-white rounded-xl border border-stone-200 text-center">
-                  <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#14532D]">
-                    Location: Reception Welcome Foyer
-                  </span>
-                  <p className="text-[11px] text-stone-500 italic font-serif mt-0.5">
-                    Infinite Green Garden Events, Kiamunyi
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-stone-200 text-center text-xs text-stone-600 font-serif italic">
-              Thank you dearly for your love, generosity, and prayers for our union!
-            </div>
           </div>
         </div>
       </div>
