@@ -4,7 +4,7 @@ import { Calendar, Sparkles, Clock } from 'lucide-react';
 import { WEDDING_DATE, WEDDING_DETAILS } from '../data';
 import Crest from './Crest';
 
-import heroJourneyImg from '../assets/images/two_hearts_journey_1791549037347.jpg';
+import heroJourneyImg from '../assets/images/annett_soren_couple_1791475779285.jpg';
 
 interface TimeLeft {
   days: number;
