@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Calendar, MapPin, Sparkles, Clock } from 'lucide-react';
+import { Calendar, Sparkles, Clock } from 'lucide-react';
 import { WEDDING_DATE, WEDDING_DETAILS } from '../data';
 import Crest from './Crest';
 
-import couplePortraitImg from '../assets/images/annett_soren_couple_1791475779285.jpg';
-import engagementHandsRingImg from '../assets/images/engagement_hands_ring_1786638744313.jpg';
+import heroJourneyImg from '../assets/images/two_hearts_journey_1791549037347.jpg';
 
 interface TimeLeft {
   days: number;
@@ -132,20 +131,20 @@ export default function Hero() {
             <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-[#C9A227] z-20" />
 
             {/* Photo Crop Wrapper */}
-            <div className="relative rounded-[18px] overflow-hidden bg-stone-100 aspect-[4/3] md:aspect-[16/10] flex items-center justify-center">
+            <div className="relative rounded-[18px] overflow-hidden bg-stone-100 aspect-[16/9] flex items-center justify-center">
               <img
-                src={couplePortraitImg}
-                alt="Annett Koskei & Søren Kolind Couple Portrait"
+                src={heroJourneyImg}
+                alt="Two Hearts, One Beautiful Journey - Annett Koskei & Søren Kolind"
                 className="w-full h-full object-cover object-center transform group-hover:scale-102 transition-transform duration-700 filter brightness-[1.02] contrast-[1.01]"
                 referrerPolicy="no-referrer"
               />
 
               {/* Natural Border Vignette */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_65%,_rgba(20,83,45,0.25)_100%)] pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_70%,_rgba(20,83,45,0.2)_100%)] pointer-events-none" />
 
               {/* Editorial Caption Tag */}
               <div className="absolute bottom-3 inset-x-0 mx-auto w-max bg-white/95 border border-[#C9A227] px-4 py-1.5 rounded-full text-[10px] text-[#14532D] font-sans font-bold tracking-widest uppercase shadow-md">
-                Annett &amp; Søren • Celebrating Love
+                Two Hearts • One Beautiful Journey
               </div>
             </div>
           </div>
@@ -171,44 +170,23 @@ export default function Hero() {
           </h1>
         </motion.div>
 
-        {/* 5. INVITATION DATE & VENUE SUMMARY BANNER */}
+        {/* 5. INVITATION DATE SUMMARY BANNER (VENUE REMOVED AS REQUESTED) */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
-          className="w-full max-w-2xl bg-white border-2 border-[#C9A227]/70 rounded-2xl p-5 md:p-6 my-6 shadow-xl relative overflow-hidden text-stone-900"
+          className="w-full max-w-md bg-white border-2 border-[#C9A227]/70 rounded-2xl p-5 md:p-6 my-6 shadow-xl relative overflow-hidden text-stone-900 mx-auto"
         >
           <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#D9CAAE]" />
           
-          <div className="flex flex-col md:flex-row items-center justify-around gap-4 text-center md:text-left">
-            {/* Date */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#14532D]/10 border border-[#14532D]/30 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-[#14532D]" />
-              </div>
-              <div>
-                <p className="text-[10px] text-stone-500 uppercase font-sans font-bold tracking-widest">Date &amp; Time</p>
-                <p className="font-serif text-[#14532D] text-base md:text-lg font-bold">Saturday, December 19, 2026</p>
-                <p className="text-xs text-[#855802] font-sans font-semibold">9:00 AM Prompt</p>
-              </div>
+          <div className="flex items-center justify-center gap-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-[#14532D]/10 border border-[#14532D]/30 flex items-center justify-center shrink-0">
+              <Calendar className="w-6 h-6 text-[#14532D]" />
             </div>
-
-            <div className="hidden md:block w-px h-10 bg-stone-200" />
-
-            {/* Time & Venue */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#C9A227]/15 border border-[#C9A227]/40 flex items-center justify-center shrink-0">
-                <MapPin className="w-5 h-5 text-[#855802]" />
-              </div>
-              <div className="text-center md:text-left">
-                <p className="text-[10px] text-stone-500 uppercase font-sans font-bold tracking-widest">Ceremony &amp; Reception</p>
-                <p className="font-serif text-[#14532D] text-sm md:text-base font-bold">
-                  {WEDDING_DETAILS.ceremony.venue}
-                </p>
-                <p className="text-xs text-stone-600 font-sans">
-                  {WEDDING_DETAILS.ceremony.address} (Same Venue)
-                </p>
-              </div>
+            <div className="text-left">
+              <p className="text-[10px] text-stone-500 uppercase font-sans font-bold tracking-widest">Wedding Date &amp; Time</p>
+              <p className="font-serif text-[#14532D] text-lg md:text-xl font-bold">Saturday, December 19, 2026</p>
+              <p className="text-xs text-[#855802] font-sans font-semibold">9:00 AM Prompt</p>
             </div>
           </div>
         </motion.div>
@@ -261,6 +239,27 @@ export default function Hero() {
               <span className="text-[9px] uppercase tracking-wider text-stone-500 font-sans font-bold mt-0.5">Secs</span>
             </div>
           </div>
+        </motion.div>
+
+        {/* 8. ADULTS-ONLY & INVITED-ONLY ADVISORY NOTE */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="mt-8 max-w-lg mx-auto bg-white/95 border border-[#C9A227]/60 rounded-2xl px-5 py-3.5 shadow-sm text-center"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-sans font-bold uppercase tracking-wider text-[#14532D]">
+            <span className="px-3 py-1 bg-[#14532D]/10 rounded-full border border-[#14532D]/20">
+              Adults Only
+            </span>
+            <span className="text-[#C9A227]">•</span>
+            <span className="px-3 py-1 bg-[#14532D]/10 rounded-full border border-[#14532D]/20">
+              Strictly by Invitation Only
+            </span>
+          </div>
+          <p className="font-serif italic text-stone-700 text-xs md:text-sm mt-2">
+            Kindly note that our wedding ceremony and reception are strictly an adults-only celebration, and admission is reserved exclusively for invited guests.
+          </p>
         </motion.div>
 
       </div>
