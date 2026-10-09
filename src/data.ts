@@ -57,7 +57,7 @@ export const WEDDING_DETAILS = {
     }
   ],
   guidelines: {
-    adultsOnly: 'While we adore your little ones, our ceremony and reception are strictly an adults-only celebration. No children allowed.',
+    adultsOnly: 'No children allowed.',
     exclusivity: 'This invitation is strictly personal and non-transferable. Please do not share or forward this link.',
     personalizedCode: 'Upon RSVP confirmation, each invited guest receives a personalized entrance access code. This code must be presented at the gate of Infinite Green Garden Events for admission.'
   }
@@ -66,51 +66,27 @@ export const WEDDING_DETAILS = {
 export const PROGRAM_ITEMS: ProgramItem[] = [
   {
     time: '9:00 AM',
-    duration: '2 hours',
-    title: 'Wedding Ceremony',
-    description: 'The solemnization of Holy Matrimony and exchange of sacred vows in the serene gardens of Infinite Green Garden Events.',
-    bullets: ['Processional & Welcome', 'Liturgy & Scripture Reading', 'Exchange of Vows & Rings', 'Nuptial Blessing & Pronouncement'],
-    isChurch: true,
+    title: 'Ceremony (Thereafter Reception – Same Venue)',
   },
   {
     time: '11:00 AM',
-    duration: '1 hour',
-    title: 'Photo Session',
-    description: 'Bridal party, family, and distinguished guest photography session across the lush manicured grounds.',
-    bullets: ['Family & Parents Portraits', 'Bridal Party & Couple Photos', 'Guest Group Photos'],
-    isChurch: false,
+    title: 'Church Photo Session',
   },
   {
     time: '12:00 PM',
-    duration: '1 hour',
     title: 'Mocktails & Refreshments',
-    description: 'Guests transition smoothly to the garden reception lounge for chilled artisanal mocktails, juices, and welcome refreshments.',
-    bullets: ['Signature Crafted Mocktails', 'Lounge Ambient Music', 'Seating & Welcoming'],
-    isChurch: false,
   },
   {
     time: '1:00 PM',
-    duration: '1 hour',
-    title: 'Luncheon Feast',
-    description: 'The newlywed grand entrance into the marquee reception followed by prayer, blessing of the feast, and gourmet lunch.',
-    bullets: ['Grand Couple Entrance', 'Blessing of the Food', 'Gourmet Luncheon Buffet Service'],
-    isChurch: false,
+    title: 'Lunch',
   },
   {
     time: '2:00 PM',
-    duration: '3 hours',
-    title: 'Entertainment & Speeches',
-    description: 'A vibrant celebration featuring heartfelt family speeches, cake cutting, Danish & Kenyan cultural toasts, and lively entertainment.',
-    bullets: ['Parents & Family Speeches', 'Cake Cutting & Toast', 'Music & Traditional Entertainment'],
-    isChurch: false,
+    title: 'Entertainment',
   },
   {
     time: '6:00 PM',
-    duration: 'Late',
-    title: 'Evening After Party',
-    description: 'Sunset drinks, rhythmic music, dancing, and evening celebration under the Nakuru starlit skies.',
-    bullets: ['Cocktail & Evening Lounge', 'DJ & Dancefloor Celebration', 'Farewell & Bonfire Moments'],
-    isChurch: false,
+    title: 'Evening After Party (Open Bar)',
   },
 ];
 
