@@ -13,11 +13,11 @@ export interface RsvpGuest {
 
 export interface ProgramItem {
   time: string;
-  duration: string;
   title: string;
+  duration?: string;
   description?: string;
   bullets?: string[];
-  isChurch: boolean;
+  isChurch?: boolean;
 }
 
 export interface ColorSwatch {
