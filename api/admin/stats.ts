@@ -5,14 +5,15 @@ import { verifyAdminToken } from '../_auth';
 export default async function handler(req: any, res: any) {
   res.setHeader('Content-Type', 'application/json');
 
+
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, error: 'Unauthorized: Authentication required.' });
+    return res.status(401).json({ success: false, error: 'Unauthorized: Passcode authentication required.' });
   }
 
   const token = authHeader.split(' ')[1];
-  if (!token || !verifyAdminToken(token)) {
-    return res.status(403).json({ success: false, error: 'Forbidden: Invalid or expired admin session.' });
+  if (!verifyAdminToken(token)) {
+    return res.status(401).json({ success: false, error: 'Unauthorized: Invalid or expired admin token.' });
   }
 
   if (req.method !== 'GET') {
