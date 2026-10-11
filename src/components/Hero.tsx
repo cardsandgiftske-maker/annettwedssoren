@@ -4,7 +4,7 @@ import { Calendar, Sparkles, Clock } from 'lucide-react';
 import { WEDDING_DATE, WEDDING_DETAILS } from '../data';
 import Crest from './Crest';
 
-import heroJourneyImg from '../assets/images/annett_soren_couple_1791475779285.jpg';
+import heroJourneyImg from '../assets/images/two_hearts_journey_1791549037347.jpg';
 
 interface TimeLeft {
   days: number;
@@ -188,6 +188,10 @@ export default function Hero() {
               <p className="font-serif text-[#14532D] text-lg md:text-xl font-bold">Saturday, December 19, 2026</p>
               <p className="text-xs text-[#855802] font-sans font-semibold">9:00 AM Prompt</p>
             </div>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-stone-200/80 flex items-center justify-center gap-1.5 text-[11px] text-[#14532D] font-sans font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+            <span>Deadline to RSVP: 1st Dec 2026</span>
           </div>
         </motion.div>
 
