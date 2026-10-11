@@ -66,11 +66,6 @@ export default function ProgramSchedule() {
                       {item.title}
                     </h3>
                   </div>
-                  {item.time === '6:00 PM' && (
-                    <span className="text-[10px] uppercase font-sans font-extrabold tracking-wider bg-emerald-50 text-[#14532D] px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
-                      Open Bar
-                    </span>
-                  )}
                 </div>
               </motion.div>
             );
