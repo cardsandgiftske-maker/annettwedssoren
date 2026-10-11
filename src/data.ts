@@ -3,10 +3,8 @@ import { ProgramItem, ColorSwatch } from './types';
 export const WEDDING_DATE = new Date('2026-12-19T09:00:00+03:00'); // East Africa Time
 
 export const MPESA_DETAILS = {
-  paybillName: 'Annett & Søren Wedding Fund',
-  paybill: '4816979',
-  accountNumber: 'Your Name',
-  accountName: 'Annett & Søren Wedding Fund'
+  number: '0742476221',
+  name: 'Annett Kosgei',
 };
 
 export const WEDDING_DETAILS = {
@@ -38,9 +36,8 @@ export const WEDDING_DETAILS = {
     { name: 'RSVP Support', phone: '+254 700 000 000' },
   ],
   registry: {
-    paybillName: 'Annett & Søren Wedding Fund',
-    paybill: '4816979',
-    accountName: 'Your Name',
+    number: '0742476221',
+    name: 'Annett Kosgei',
   },
   bibleVerses: [
     {
@@ -86,7 +83,7 @@ export const PROGRAM_ITEMS: ProgramItem[] = [
   },
   {
     time: '6:00 PM',
-    title: 'Evening After Party (Open Bar)',
+    title: 'Evening After Party',
   },
 ];
 
