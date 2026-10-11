@@ -27,11 +27,15 @@ export default function DressCode() {
           </div>
 
           <div className="inline-block px-6 py-2 bg-[#14532D]/10 border border-[#14532D]/30 rounded-full text-[#14532D] text-xs font-sans font-extrabold uppercase tracking-widest shadow-xs">
-            Attire: Formal Elegant
+            Theme: Green &amp; Beige
           </div>
 
           <p className="text-stone-700 text-base md:text-lg font-serif italic leading-relaxed max-w-xl mx-auto">
-            We kindly invite our cherished guests to grace our celebration in <strong className="font-semibold text-[#14532D] not-italic">Formal Elegant</strong> attire, reflecting our wedding theme colors of <span className="text-[#14532D] font-bold not-italic">Green</span> and <span className="text-[#8C7A5B] font-bold not-italic">Beige</span>.
+            We kindly invite our guests to celebrate with us in colourful, vibrant and elegant attires.
+          </p>
+
+          <p className="text-xs uppercase tracking-widest font-sans font-bold text-[#14532D]">
+            Theme Colors: <span className="text-[#14532D]">Green</span> &amp; <span className="text-[#8C7A5B]">Beige</span>
           </p>
 
           <div className="pt-4 border-t border-stone-200 flex items-center justify-center gap-2 text-stone-600 text-xs font-serif italic">
