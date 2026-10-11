@@ -162,6 +162,9 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
               <p className="text-[9px] text-stone-600 italic font-serif">
                 Infinite Green Garden Events, Nakuru
               </p>
+              <p className="text-[8px] font-bold text-[#855802] uppercase tracking-wider mt-0.5">
+                RSVP Deadline: 1st Dec 2026
+              </p>
             </div>
 
             <div className="w-full py-1.5 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#14532D] text-white text-[9px] font-sans font-bold uppercase tracking-widest text-center rounded-lg shadow-sm">
