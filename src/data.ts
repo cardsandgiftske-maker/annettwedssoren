@@ -56,8 +56,10 @@ export const WEDDING_DETAILS = {
   guidelines: {
     adultsOnly: 'No children allowed.',
     exclusivity: 'This invitation is strictly personal and non-transferable. Please do not share or forward this link.',
-    personalizedCode: 'Upon RSVP confirmation, each invited guest receives a personalized entrance access code. This code must be presented at the gate of Infinite Green Garden Events for admission.'
-  }
+    personalizedCode: 'Upon RSVP confirmation, each invited guest receives a personalized entrance access code. This code must be presented at the gate of Infinite Green Garden Events for admission.',
+    rsvpDeadline: '1st December 2026'
+  },
+  rsvpDeadline: '1st December 2026'
 };
 
 export const PROGRAM_ITEMS: ProgramItem[] = [
