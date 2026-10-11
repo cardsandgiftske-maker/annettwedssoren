@@ -55,7 +55,7 @@ export default function Gifting() {
                       In-Person Presentation
                     </h4>
                     <p className="text-sm text-stone-700 font-sans leading-relaxed mt-2">
-                      Gift envelopes can be presented in person at the reception venue during the speeches and gifts session.
+                      Gift envelopes can be presented in person at the reception venue during the speeches and gifts session. (Envelopes will be provided.)
                     </p>
                   </div>
                 </div>
@@ -67,7 +67,7 @@ export default function Gifting() {
             </div>
           </div>
 
-          {/* Option 2: MPesa Paybill Card */}
+          {/* Option 2: MPesa Send Money / Gifting Card */}
           <div className="bg-white border-2 border-[#C9A227]/60 p-6 md:p-8 rounded-3xl shadow-xl text-stone-900 relative overflow-hidden flex flex-col justify-between">
             <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#14532D]" />
 
@@ -83,46 +83,40 @@ export default function Gifting() {
               </div>
 
               <div className="space-y-4">
-                {/* Paybill Number */}
+                {/* M-Pesa Gifting Number */}
                 <div className="flex items-center justify-between p-3.5 bg-stone-50 border border-stone-200 rounded-2xl shadow-xs">
                   <div>
-                    <span className="text-[10px] text-stone-500 font-sans uppercase font-bold tracking-widest block">Paybill Number</span>
-                    <span className="text-xl font-mono font-bold text-[#14532D]">{MPESA_DETAILS.paybill}</span>
+                    <span className="text-[10px] text-stone-500 font-sans uppercase font-bold tracking-widest block">M-Pesa Gifting Number</span>
+                    <span className="text-xl font-mono font-bold text-[#14532D]">{MPESA_DETAILS.number}</span>
                   </div>
                   <button
-                    onClick={() => copyToClipboard(MPESA_DETAILS.paybill, 'paybill')}
+                    onClick={() => copyToClipboard(MPESA_DETAILS.number, 'number')}
                     className="px-3 py-2 bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 rounded-xl text-xs font-sans font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
                   >
-                    {copiedField === 'paybill' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-[#14532D]" />}
-                    <span>{copiedField === 'paybill' ? 'Copied' : 'Copy'}</span>
+                    {copiedField === 'number' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-[#14532D]" />}
+                    <span>{copiedField === 'number' ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
 
-                {/* Account Number */}
+                {/* Recipient Name */}
                 <div className="flex items-center justify-between p-3.5 bg-stone-50 border border-stone-200 rounded-2xl shadow-xs">
                   <div>
-                    <span className="text-[10px] text-stone-500 font-sans uppercase font-bold tracking-widest block">Account Number</span>
-                    <span className="text-base font-mono font-bold text-stone-800">{MPESA_DETAILS.accountNumber}</span>
+                    <span className="text-[10px] text-stone-500 font-sans uppercase font-bold tracking-widest block">Recipient Name</span>
+                    <span className="text-base font-serif font-bold text-[#14532D]">{MPESA_DETAILS.name}</span>
                   </div>
                   <button
-                    onClick={() => copyToClipboard(MPESA_DETAILS.accountNumber, 'account')}
+                    onClick={() => copyToClipboard(MPESA_DETAILS.name, 'name')}
                     className="px-3 py-2 bg-white hover:bg-stone-100 border border-stone-300 text-stone-800 rounded-xl text-xs font-sans font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
                   >
-                    {copiedField === 'account' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-[#14532D]" />}
-                    <span>{copiedField === 'account' ? 'Copied' : 'Copy'}</span>
+                    {copiedField === 'name' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-[#14532D]" />}
+                    <span>{copiedField === 'name' ? 'Copied' : 'Copy'}</span>
                   </button>
-                </div>
-
-                {/* Account Name */}
-                <div className="p-3.5 bg-stone-50 border border-stone-200 rounded-2xl shadow-xs text-center">
-                  <span className="text-[10px] text-stone-500 font-sans uppercase font-bold tracking-widest block">Account Name</span>
-                  <span className="text-sm font-serif font-bold text-[#14532D]">{MPESA_DETAILS.accountName}</span>
                 </div>
               </div>
             </div>
 
             <p className="mt-6 pt-4 border-t border-stone-200 text-center text-xs text-stone-500 font-sans">
-              Instant mobile transfer via Safaricom M-Pesa.
+              Send Money to {MPESA_DETAILS.number} ({MPESA_DETAILS.name}) via Safaricom M-Pesa.
             </p>
           </div>
         </div>
