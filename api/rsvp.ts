@@ -1,4 +1,4 @@
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { db, COLLECTION_NAME } from './_firebase';
 
 export default async function handler(req: any, res: any) {
@@ -38,6 +38,29 @@ export default async function handler(req: any, res: any) {
 
     const cleanFullName = fullName.trim();
     const cleanPhone = phoneNumber.trim();
+
+    // Check if phone number has already been used for RSVP
+    const rawTargetDigits = cleanPhone.replace(/\D/g, '');
+    const targetDigits = rawTargetDigits.length >= 9 ? rawTargetDigits.slice(-9) : rawTargetDigits;
+
+    if (targetDigits.length >= 7) {
+      const existingSnap = await getDocs(collection(db, COLLECTION_NAME));
+      const isDuplicate = existingSnap.docs.some((docSnap) => {
+        const data = docSnap.data();
+        if (!data || !data.phoneNumber) return false;
+        const existingRaw = String(data.phoneNumber).replace(/\D/g, '');
+        const existingDigits = existingRaw.length >= 9 ? existingRaw.slice(-9) : existingRaw;
+        return existingDigits && existingDigits === targetDigits;
+      });
+
+      if (isDuplicate) {
+        return res.status(400).json({
+          success: false,
+          error: 'This phone number has already been used to confirm an RSVP. Each phone number can only confirm once.',
+        });
+      }
+    }
+
     const rsvpId = typeof id === 'string' && /^[a-zA-Z0-9_\-]+$/.test(id.trim())
       ? id.trim()
       : `rsvp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
