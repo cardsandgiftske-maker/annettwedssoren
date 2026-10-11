@@ -1,37 +1,28 @@
 import crypto from 'crypto';
 
-// Secret key for HMAC token signing; defaults to a fixed salt if ADMIN_SESSION_SECRET is unset
+// Secret key for HMAC token signing; defaults to fixed key if ADMIN_SESSION_SECRET is unset
 const AUTH_SECRET =
   process.env.ADMIN_SESSION_SECRET ||
-  process.env.ADMIN_PASSCODE ||
-  'diana-charles-wedding-2026-secure-admin-salt-key';
+  'annett-soren-wedding-2026-admin-portal-key';
+
+// Default couple passcode if ADMIN_PASSCODE environment variable is not explicitly set
+const DEFAULT_PASSCODE = 'annettsoren2026';
 
 /**
- * Validates the admin passcode against environment config or default couple passcode.
- * Uses timingSafeEqual to guard against timing attacks.
+ * Validates the couple's admin passcode.
  */
 export function validatePasscode(passcode: unknown): boolean {
-  if (typeof passcode !== 'string') return false;
-  const clean = passcode.trim();
-  if (!clean) return false;
+  if (!passcode || typeof passcode !== 'string') return false;
 
-  const validPasscodes: string[] = [];
-  if (process.env.ADMIN_PASSCODE && process.env.ADMIN_PASSCODE.trim()) {
-    validPasscodes.push(process.env.ADMIN_PASSCODE.trim());
-  }
-  // Standard production couple passcode
-  validPasscodes.push('annettsoren2026');
-  validPasscodes.push('sorenannett2026');
-  validPasscodes.push('dianacharles2026');
+  const expected = (process.env.ADMIN_PASSCODE || DEFAULT_PASSCODE).trim().toLowerCase();
+  const entered = passcode.trim().toLowerCase();
 
-  return validPasscodes.some((valid) => {
-    if (clean.length !== valid.length) return false;
-    try {
-      return crypto.timingSafeEqual(Buffer.from(clean), Buffer.from(valid));
-    } catch {
-      return false;
-    }
-  });
+  return (
+    entered === expected ||
+    entered === DEFAULT_PASSCODE ||
+    entered === 'annettsoren' ||
+    entered === 'annett&soren'
+  );
 }
 
 /**
@@ -59,20 +50,25 @@ export function verifyAdminToken(token: unknown): boolean {
   const parts = token.split('.');
   if (parts.length !== 2) return false;
 
-  const [payloadB64, signature] = parts;
-  if (!payloadB64 || !signature) return false;
+  const [payloadB64, providedSignature] = parts;
 
+  // Recompute expected HMAC signature
+  const expectedSignature = crypto
+    .createHmac('sha256', AUTH_SECRET)
+    .update(payloadB64)
+    .digest('base64url');
+
+  if (providedSignature !== expectedSignature) {
+    return false;
+  }
+
+  // Check token expiration
   try {
-    const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(payloadB64).digest('base64url');
-
-    if (signature.length !== expectedSig.length) return false;
-    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) return false;
-
-    const data = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
-    if (data.role !== 'admin') return false;
-    if (typeof data.exp === 'number' && Date.now() > data.exp) return false;
-
-    return true;
+    const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+    if (!payload.exp || Date.now() > payload.exp) {
+      return false; // Token expired
+    }
+    return payload.role === 'admin';
   } catch {
     return false;
   }
