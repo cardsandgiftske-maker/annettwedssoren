@@ -6,14 +6,6 @@ import {
   AlertCircle,
   Sparkles,
   User,
-  Phone,import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import {
-  Mail,
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
-  User,
   Phone,
   Check,
   Heart,
