@@ -10,7 +10,6 @@ import {
   Check,
   Heart,
   MessageSquare,
-  ArrowLeft,
   KeyRound,
   Copy,
   ShieldCheck,
@@ -37,6 +36,13 @@ export default function RsvpForm() {
   const [showFloatingBtn, setShowFloatingBtn] = useState(true);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem('as_confirmed_rsvp_guest');
+      if (saved) {
+        setSubmittedGuest(JSON.parse(saved));
+      }
+    } catch {}
+
     const handleScroll = () => {
       const rsvpSection = document.getElementById('rsvp-section');
       if (rsvpSection) {
@@ -81,6 +87,19 @@ export default function RsvpForm() {
       return;
     }
 
+    const rawDigits = phoneNumber.replace(/\D/g, '');
+    const targetDigits = rawDigits.length >= 9 ? rawDigits.slice(-9) : rawDigits;
+
+    let usedPhones: string[] = [];
+    try {
+      usedPhones = JSON.parse(localStorage.getItem('as_used_rsvp_phones') || '[]');
+    } catch {}
+
+    if (usedPhones.includes(targetDigits)) {
+      setErrorMessage('This phone number has already been used to confirm attendance. Each phone number can only confirm once.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -99,8 +118,17 @@ export default function RsvpForm() {
 
       // Save to secure backend database
       const response = await saveRsvp(newGuest);
+      const finalGuest = response?.rsvp || newGuest;
 
-      setSubmittedGuest(response?.rsvp || newGuest);
+      setSubmittedGuest(finalGuest);
+
+      // Prevent phone reuse and retain confirmed gate pass
+      try {
+        localStorage.setItem('as_confirmed_rsvp_guest', JSON.stringify(finalGuest));
+        const updatedPhones = Array.from(new Set([...usedPhones, targetDigits]));
+        localStorage.setItem('as_used_rsvp_phones', JSON.stringify(updatedPhones));
+      } catch {}
+
       setLoading(false);
 
       // Reset form fields
@@ -276,14 +304,6 @@ export default function RsvpForm() {
                   <p className="text-xs text-stone-500 font-sans italic">
                     Annett Koskei &amp; Søren Kolind • Saturday, December 19, 2026
                   </p>
-
-                  <button
-                    onClick={() => setSubmittedGuest(null)}
-                    className="text-stone-600 hover:text-[#14532D] text-xs font-sans font-bold tracking-wider uppercase flex items-center gap-1.5 cursor-pointer hover:underline transition-all"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Submit another response</span>
-                  </button>
                 </div>
               </motion.div>
             ) : (
@@ -367,7 +387,7 @@ export default function RsvpForm() {
                   {/* Will Attend toggle buttons */}
                   <div className="space-y-1.5">
                     <label className="text-xs uppercase tracking-widest text-stone-700 font-sans font-bold block">
-                      Will you be joining us?
+                      Will you attend?
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <button
@@ -380,7 +400,7 @@ export default function RsvpForm() {
                         }`}
                       >
                         <Check className="w-4 h-4 shrink-0" />
-                        <span>Joyfully Accepts</span>
+                        <span>Yes, attending</span>
                       </button>
                       <button
                         type="button"
@@ -392,7 +412,7 @@ export default function RsvpForm() {
                         }`}
                       >
                         <AlertCircle className="w-4 h-4 shrink-0" />
-                        <span>Regretfully Declines</span>
+                        <span>Unable to attend</span>
                       </button>
                     </div>
                   </div>
