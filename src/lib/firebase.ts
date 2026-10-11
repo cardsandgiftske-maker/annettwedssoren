@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { RsvpGuest } from '../types';
 
 export const isFirebaseConfigured = true;
@@ -52,7 +52,7 @@ export function buildValidatedRsvp(raw: Partial<RsvpGuest>): RsvpGuest {
 
   const eCardCode = typeof raw.eCardCode === 'string' && raw.eCardCode.trim()
     ? raw.eCardCode.trim()
-    : `DC-26-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    : `AS-26-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
   const cleanDoc: Record<string, any> = {
     id,
@@ -132,6 +132,26 @@ export async function saveRsvp(rsvpInput: Partial<RsvpGuest>): Promise<{ success
 
   // Fallback direct Firestore write if the serverless/API endpoint is unreachable
   try {
+    const rawTargetDigits = validatedRsvp.phoneNumber.replace(/\D/g, '');
+    const targetDigits = rawTargetDigits.length >= 9 ? rawTargetDigits.slice(-9) : rawTargetDigits;
+
+    if (targetDigits.length >= 7) {
+      const snap = await getDocs(collection(clientDb, 'rsvps'));
+      const isDuplicate = snap.docs.some((d) => {
+        const data = d.data();
+        if (!data || !data.phoneNumber) return false;
+        const existingRaw = String(data.phoneNumber).replace(/\D/g, '');
+        const existingDigits = existingRaw.length >= 9 ? existingRaw.slice(-9) : existingRaw;
+        return existingDigits && existingDigits === targetDigits;
+      });
+
+      if (isDuplicate) {
+        throw new Error(
+          'This phone number has already been used to confirm an RSVP. Each phone number can only confirm once.'
+        );
+      }
+    }
+
     const docRef = doc(clientDb, 'rsvps', validatedRsvp.id);
     await setDoc(docRef, validatedRsvp);
 
@@ -140,6 +160,9 @@ export async function saveRsvp(rsvpInput: Partial<RsvpGuest>): Promise<{ success
       rsvp: validatedRsvp
     };
   } catch (firestoreErr: any) {
+    if (firestoreErr.message?.includes('already been used')) {
+      throw firestoreErr;
+    }
     console.error('Direct Firestore submission failure:', firestoreErr);
     throw new Error(
       'Unable to record your RSVP in the database. Please check your network connection and try again.'
