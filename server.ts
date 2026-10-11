@@ -17,19 +17,21 @@ import {
 } from 'firebase/firestore';
 
 import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth';
+import firebaseAppletConfig from './firebase-applet-config.json';
 
 // Initialize Firebase SDK on server
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || 'AIzaSyAaMfdiMyP2L7X-tHrDCDXF7ZXsNBPut4s',
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || 'dianaandcharles-8d637.firebaseapp.com',
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || 'dianaandcharles-8d637',
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || 'dianaandcharles-8d637.firebasestorage.app',
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || '434427553533',
-  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || '1:434427553533:web:51895a4d238effe68b4094'
+  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || firebaseAppletConfig.apiKey,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || firebaseAppletConfig.authDomain,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || firebaseAppletConfig.projectId,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || firebaseAppletConfig.storageBucket,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || firebaseAppletConfig.messagingSenderId,
+  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || firebaseAppletConfig.appId,
+  firestoreDatabaseId: firebaseAppletConfig.firestoreDatabaseId
 };
 
 const appInstance = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(appInstance);
+const db = getFirestore(appInstance, firebaseConfig.firestoreDatabaseId);
 const COLLECTION_NAME = 'rsvps';
 
 // Normalizes phone numbers for duplicate checks (strips spaces, dashes, parentheses)
@@ -171,29 +173,30 @@ async function startServer() {
     res.setHeader('Content-Type', 'application/json');
     const { passcode } = req.body || {};
 
-    if (!passcode || typeof passcode !== 'string' || passcode.trim().length === 0) {
-      return res.status(400).json({ success: false, error: 'Passcode is required.' });
+    if (!passcode || typeof passcode !== 'string' || !validatePasscode(passcode)) {
+      return res.status(401).json({
+        success: false,
+        error: 'Incorrect passcode. Please enter the valid Couple Admin Portal passcode.'
+      });
     }
 
-    if (validatePasscode(passcode)) {
-      const token = generateAdminToken();
-      return res.status(200).json({ success: true, token });
-    }
-
-    return res.status(401).json({ success: false, error: 'Incorrect passcode. Access Denied.' });
+    const token = generateAdminToken();
+    return res.status(200).json({ success: true, token });
   });
 
-  // Admin authorization middleware
+  // Admin middleware: enforces valid session token
   const requireAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.setHeader('Content-Type', 'application/json');
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ success: false, error: 'Unauthorized: Authentication required.' });
+      return res.status(401).json({ success: false, error: 'Unauthorized: Passcode authentication required.' });
     }
+
     const token = authHeader.split(' ')[1];
-    if (!token || !verifyAdminToken(token)) {
-      return res.status(403).json({ success: false, error: 'Forbidden: Invalid or expired admin session.' });
+    if (!verifyAdminToken(token)) {
+      return res.status(401).json({ success: false, error: 'Unauthorized: Invalid or expired admin token.' });
     }
+
     next();
   };
 
