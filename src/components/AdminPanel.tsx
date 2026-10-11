@@ -1,6 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Shield, Key, Search, Trash2, RefreshCw, X, Eye, EyeOff, Users, CheckCircle, FileSpreadsheet, LogOut } from 'lucide-react';
+import { 
+  Shield, 
+  Key, 
+  Lock, 
+  Unlock, 
+  Search, 
+  Trash2, 
+  RefreshCw, 
+  X, 
+  Eye, 
+  EyeOff, 
+  Users, 
+  CheckCircle, 
+  FileSpreadsheet, 
+  LogOut,
+  AlertCircle
+} from 'lucide-react';
 import { RsvpGuest } from '../types';
 import { 
   adminLogin, 
@@ -12,76 +28,85 @@ import {
 
 export default function AdminPanel() {
   const [isOpen, setIsOpen] = useState(false);
-  const [adminToken, setAdminToken] = useState<string>(() => sessionStorage.getItem('wedding_admin_token') || '');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!sessionStorage.getItem('wedding_admin_token'));
-  const [passcode, setPasscode] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [guests, setGuests] = useState<RsvpGuest[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [attendanceFilter, setAttendanceFilter] = useState<'all' | 'yes' | 'no'>('all');
-  const [passcodeError, setPasscodeError] = useState('');
 
-  // Fetch RSVPs from the secure backend endpoint
-  const loadRsvps = useCallback(async (tokenToUse?: string) => {
-    const token = tokenToUse || adminToken;
-    if (!token) return;
+  // Authentication barrier state
+  const [passcode, setPasscode] = useState('');
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [adminToken, setAdminToken] = useState<string>(() => {
+    return sessionStorage.getItem('wedding_admin_token') || '';
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return !!sessionStorage.getItem('wedding_admin_authenticated');
+  });
 
+  // Fetch RSVPs when authenticated
+  const loadRsvps = useCallback(async (token?: string) => {
+    const activeToken = token || adminToken;
     setIsLoadingData(true);
     try {
-      const data = await getAdminRsvps(token);
+      const data = await getAdminRsvps(activeToken);
       setGuests(data);
     } catch (err: any) {
       console.error('Failed to load RSVPs:', err);
-      if (err.message && (err.message.includes('Unauthorized') || err.message.includes('Forbidden'))) {
-        setIsAuthenticated(false);
-        setAdminToken('');
-        sessionStorage.removeItem('wedding_admin_token');
-        setPasscodeError('Session expired. Please log in again.');
-      }
     } finally {
       setIsLoadingData(false);
     }
   }, [adminToken]);
 
-  // Load data ONLY when the modal is opened AND user is authenticated
+  // Load data automatically when opened and authenticated
   useEffect(() => {
-    if (isOpen && isAuthenticated && adminToken) {
-      loadRsvps(adminToken);
+    if (isOpen && isAuthenticated) {
+      loadRsvps();
     }
-  }, [isOpen, isAuthenticated, adminToken, loadRsvps]);
+  }, [isOpen, isAuthenticated, loadRsvps]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasscodeError('');
-    setIsLoggingIn(true);
+  // Handle Passcode Submission to Unlock Portal
+  const handleUnlock = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!passcode.trim()) {
+      setAuthError('Please enter the couple admin passcode.');
+      return;
+    }
+
+    setIsVerifying(true);
+    setAuthError('');
 
     try {
-      const result = await adminLogin(passcode);
-      if (result.success && result.token) {
-        setAdminToken(result.token);
-        sessionStorage.setItem('wedding_admin_token', result.token);
+      const res = await adminLogin(passcode);
+      if (res.success && res.token) {
+        setAdminToken(res.token);
         setIsAuthenticated(true);
+        sessionStorage.setItem('wedding_admin_authenticated', 'true');
+        sessionStorage.setItem('wedding_admin_token', res.token);
         setPasscode('');
-        await loadRsvps(result.token);
+        loadRsvps(res.token);
+      } else {
+        setAuthError('Incorrect passcode. Please try again.');
       }
     } catch (err: any) {
-      setPasscodeError(err.message || 'Incorrect passcode. Access Denied.');
+      setAuthError(err?.message || 'Incorrect passcode. Access denied.');
     } finally {
-      setIsLoggingIn(false);
+      setIsVerifying(false);
     }
   };
 
-  const handleLogout = () => {
+  // Lock portal / log out
+  const handleLockPortal = () => {
     setIsAuthenticated(false);
     setAdminToken('');
+    setPasscode('');
+    setAuthError('');
+    sessionStorage.removeItem('wedding_admin_authenticated');
     sessionStorage.removeItem('wedding_admin_token');
-    setGuests([]);
   };
 
   const handleDelete = async (id: string) => {
-    if (!adminToken) return;
     if (window.confirm('Are you sure you want to delete this RSVP entry?')) {
       try {
         await deleteAdminRsvp(adminToken, id);
@@ -93,7 +118,6 @@ export default function AdminPanel() {
   };
 
   const handleToggleAttendance = async (id: string) => {
-    if (!adminToken) return;
     const guest = guests.find((g) => g.id === id);
     if (!guest) return;
 
@@ -113,7 +137,6 @@ export default function AdminPanel() {
   const handleExportCSV = () => {
     if (guests.length === 0) return;
 
-    // Construct CSV Header and Content
     const headers = ['ID', 'Full Name', 'Phone Number', 'Will Attend', 'Song Request', 'Digital Code', 'Notes', 'Submitted At'];
     const rows = guests.map((g) => [
       g.id,
@@ -127,13 +150,11 @@ export default function AdminPanel() {
     ]);
 
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    
-    // Create hidden trigger to download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `annett_and_soren_wedding_rsvps_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute('download', `annett_and_soren_wedding_rsvps_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -160,18 +181,26 @@ export default function AdminPanel() {
 
   return (
     <>
-      {/* Small floating admin entry trigger in the page footer */}
+      {/* Floating admin entry trigger in page footer */}
       <div className="py-10 bg-stone-900 flex justify-center border-t border-stone-800 text-stone-100 font-sans text-xs select-none">
         <div className="flex flex-col items-center gap-2">
           <p className="text-stone-400">© 2026 Annett &amp; Søren. All rights reserved.</p>
           <button
             onClick={() => setIsOpen(true)}
-            className="text-stone-200 hover:text-white font-medium transition-all flex items-center gap-1.5 cursor-pointer text-[11px] bg-stone-800 hover:bg-stone-700 px-4 py-2 rounded-full border border-stone-700 shadow-md active:scale-95"
-            title="Password-Protected Couple Admin Panel"
+            className="text-stone-200 hover:text-white font-medium transition-all flex items-center gap-2 cursor-pointer text-[11px] bg-stone-800 hover:bg-stone-700 px-4 py-2 rounded-full border border-stone-700 shadow-md active:scale-95"
+            title="Couple Admin Portal"
           >
             <Shield className="w-3.5 h-3.5 text-amber-400" />
             <span>Couple Admin Portal</span>
-            <span className="text-[9px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/40 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-wider uppercase">Secured</span>
+            {isAuthenticated ? (
+              <span className="text-[9px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/40 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-wider uppercase flex items-center gap-1">
+                <Unlock className="w-2.5 h-2.5" /> Unlocked
+              </span>
+            ) : (
+              <span className="text-[9px] bg-amber-950/80 text-amber-300 border border-amber-800/40 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-wider uppercase flex items-center gap-1">
+                <Lock className="w-2.5 h-2.5" /> Protected
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -183,105 +212,168 @@ export default function AdminPanel() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 bg-stone-950/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
           >
-            <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
-              {/* Header */}
-              <div className="border-b border-stone-100 p-6 flex items-center justify-between bg-[#FCFAF7]">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-maroon-50 border border-maroon-200 flex items-center justify-center text-maroon-700">
-                    <Shield className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-serif text-xl text-stone-900 font-medium">Guest RSVP Dashboard</h3>
-                      {isFirebaseConfigured ? (
-                        <span className="flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
-                          Cloud Live
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[8px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
-                          Sandbox
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-stone-500 font-sans">Annett &amp; Søren Wedding RSVP Database</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {isAuthenticated && (
-                    <button
-                      onClick={handleLogout}
-                      className="p-2 hover:bg-rose-50 rounded-full text-stone-400 hover:text-rose-700 transition-colors cursor-pointer"
-                      title="Log Out"
-                    >
-                      <LogOut className="w-4 h-4" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+            {/* PASSCODE BARRIER SCREEN */}
+            {!isAuthenticated ? (
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-white border border-stone-200 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative p-8 my-8 text-stone-900"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute top-5 right-5 p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
 
-              {/* Login authentication overlay if not authenticated */}
-              {!isAuthenticated ? (
-                <div className="p-12 flex flex-col items-center justify-center text-center max-w-sm mx-auto space-y-6">
-                  <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center animate-pulse">
-                    <Key className="w-8 h-8" />
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-serif text-lg text-stone-900 font-medium">Passcode Required</h4>
-                    <p className="text-xs text-stone-500">Exclusively for Annett &amp; Søren to access the guest RSVP database.</p>
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#14532D]/15 to-[#C9A227]/20 border border-[#C9A227]/40 flex items-center justify-center text-[#14532D] mb-4 shadow-sm">
+                    <Key className="w-8 h-8 text-[#14532D]" />
                   </div>
 
-                  <form onSubmit={handleLogin} className="w-full space-y-4">
+                  <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-[#C9A227] bg-[#C9A227]/10 px-3 py-1 rounded-full mb-2">
+                    Private Couple Access
+                  </span>
+
+                  <h3 className="font-serif text-2xl text-stone-900 font-bold mb-1">
+                    Couple Admin Portal
+                  </h3>
+                  <p className="text-xs text-stone-600 font-sans max-w-xs leading-relaxed mb-6">
+                    Enter the secret passcode to access guest RSVPs, responses, and attendance records.
+                  </p>
+
+                  {/* Passcode Form */}
+                  <form onSubmit={handleUnlock} className="w-full space-y-4">
                     <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                        <Lock className="w-4 h-4" />
+                      </div>
                       <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        placeholder="Enter Admin Passcode"
+                        type={showPasscode ? 'text' : 'password'}
                         value={passcode}
-                        onChange={(e) => setPasscode(e.target.value)}
-                        className="w-full bg-stone-50 border border-stone-200 focus:border-maroon-700 rounded-xl pl-4 pr-11 py-3 text-sm text-stone-800 outline-none transition-colors text-center font-sans"
+                        onChange={(e) => {
+                          setPasscode(e.target.value);
+                          if (authError) setAuthError('');
+                        }}
+                        placeholder="Enter admin passcode"
+                        autoFocus
+                        className="w-full bg-stone-50 border border-stone-300 focus:border-[#14532D] focus:ring-2 focus:ring-[#14532D]/15 rounded-xl pl-10 pr-11 py-3 text-sm text-stone-900 placeholder:text-stone-400 outline-none transition-all font-mono tracking-wider"
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-3 text-stone-400 hover:text-stone-700 transition-colors"
+                        onClick={() => setShowPasscode(!showPasscode)}
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
+                        title={showPasscode ? 'Hide passcode' : 'Show passcode'}
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
 
-                    {passcodeError && (
-                      <p className="text-xs text-rose-600 font-medium">{passcodeError}</p>
+                    {/* Error display */}
+                    {authError && (
+                      <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 text-left">
+                        <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                        <span>{authError}</span>
+                      </div>
                     )}
 
+                    {/* Submit Button */}
                     <button
                       type="submit"
-                      disabled={isLoggingIn}
-                      className="w-full py-3 bg-maroon-800 hover:bg-maroon-900 text-white font-sans font-bold uppercase tracking-wider text-xs rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                      disabled={isVerifying || !passcode.trim()}
+                      className="w-full bg-gradient-to-r from-[#14532D] to-[#1e6f3d] hover:from-[#114525] hover:to-[#175b32] text-white py-3 rounded-xl font-sans font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
                     >
-                      {isLoggingIn ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      {isVerifying ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Verifying Passcode...</span>
+                        </>
                       ) : (
-                        <span>Authenticate Access</span>
+                        <>
+                          <Unlock className="w-4 h-4 text-amber-300" />
+                          <span>Unlock Portal</span>
+                        </>
                       )}
                     </button>
                   </form>
+
+                  {/* Couple Quick-Help / Hint */}
+                  <div className="mt-6 pt-5 border-t border-stone-100 w-full text-center">
+                    <p className="text-[11px] text-stone-500 font-sans">
+                      Default couple passcode:{' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPasscode('annettsoren2026');
+                          setAuthError('');
+                        }}
+                        className="font-mono text-[#14532D] font-bold underline hover:text-[#C9A227] cursor-pointer transition-colors"
+                        title="Click to auto-fill passcode"
+                      >
+                        annettsoren2026
+                      </button>
+                    </p>
+                  </div>
                 </div>
-              ) : (
-                /* Authenticated Dashboard Panel */
+              </motion.div>
+            ) : (
+              /* AUTHENTICATED DASHBOARD PANEL */
+              <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
+                {/* Header */}
+                <div className="border-b border-stone-100 p-6 flex items-center justify-between bg-[#FCFAF7]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+                      <Shield className="w-5 h-5 text-[#14532D]" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-serif text-xl text-stone-900 font-medium">Guest RSVP Dashboard</h3>
+                        {isFirebaseConfigured ? (
+                          <span className="flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
+                            Cloud Live
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[8px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
+                            Sandbox
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-stone-500 font-sans">Annett &amp; Søren Wedding RSVP Database</p>
+                    </div>
+                  </div>
+                  
+                  {/* Lock Portal & Close */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleLockPortal}
+                      className="px-3 py-1.5 bg-stone-100 hover:bg-rose-50 text-stone-600 hover:text-rose-700 border border-stone-200 hover:border-rose-200 rounded-xl text-xs font-sans font-medium transition-all flex items-center gap-1.5 cursor-pointer"
+                      title="Lock portal and require passcode again"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Lock Portal</span>
+                    </button>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                      title="Close"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Dashboard Panel Content */}
                 <div className="p-6 overflow-y-auto space-y-6 flex-1 flex flex-col">
                   {/* Dashboard stats cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Stat 1 */}
                     <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
-                      <div className="w-10 h-10 rounded-xl bg-maroon-50 text-maroon-700 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#14532D]/10 text-[#14532D] flex items-center justify-center shrink-0">
                         <Users className="w-5 h-5" />
                       </div>
                       <div>
@@ -325,7 +417,7 @@ export default function AdminPanel() {
                           placeholder="Search guest by name or phone..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full bg-stone-50 border border-stone-200 focus:border-maroon-700 rounded-xl pl-10 pr-4 py-2 text-xs text-stone-800 outline-none transition-colors"
+                          className="w-full bg-stone-50 border border-stone-200 focus:border-[#14532D] rounded-xl pl-10 pr-4 py-2 text-xs text-stone-800 outline-none transition-colors"
                         />
                       </div>
 
@@ -334,7 +426,7 @@ export default function AdminPanel() {
                         <button
                           onClick={() => setAttendanceFilter('all')}
                           className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'all' ? 'bg-maroon-700 text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                            attendanceFilter === 'all' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
                           }`}
                         >
                           All
@@ -342,7 +434,7 @@ export default function AdminPanel() {
                         <button
                           onClick={() => setAttendanceFilter('yes')}
                           className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'yes' ? 'bg-maroon-700 text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                            attendanceFilter === 'yes' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
                           }`}
                         >
                           Attending
@@ -350,7 +442,7 @@ export default function AdminPanel() {
                         <button
                           onClick={() => setAttendanceFilter('no')}
                           className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'no' ? 'bg-maroon-700 text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                            attendanceFilter === 'no' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
                           }`}
                         >
                           Declined
@@ -373,9 +465,9 @@ export default function AdminPanel() {
                       <button
                         onClick={handleExportCSV}
                         disabled={guests.length === 0}
-                        className="px-4 py-2 bg-maroon-800 hover:bg-maroon-900 text-white font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+                        className="px-4 py-2 bg-[#14532D] hover:bg-[#0f3d21] text-white font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
                       >
-                        <FileSpreadsheet className="w-4 h-4" />
+                        <FileSpreadsheet className="w-4 h-4 text-amber-300" />
                         <span>Export CSV</span>
                       </button>
                     </div>
@@ -429,7 +521,7 @@ export default function AdminPanel() {
                                   {guest.willAttend === 'yes' ? 'Attending' : 'Declined'}
                                 </button>
                               </td>
-                              <td className="p-4 text-center font-mono font-bold text-maroon-800 tracking-wider">
+                              <td className="p-4 text-center font-mono font-bold text-[#14532D] tracking-wider">
                                 {guest.eCardCode}
                               </td>
                               <td className="p-4 text-stone-600 italic max-w-xs truncate" title={guest.notes}>
@@ -453,11 +545,11 @@ export default function AdminPanel() {
 
                   {/* Footer Stats summary */}
                   <div className="text-[10px] text-stone-500 text-center font-sans">
-                    Showing {filteredGuests.length} of {guests.length} total registrations. Secured couple administrative portal.
+                    Showing {filteredGuests.length} of {guests.length} total registrations. Protected couple administrative portal.
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
