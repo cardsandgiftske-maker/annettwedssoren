@@ -20,18 +20,25 @@ import {
 
 import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth.js';
 
-// Load firebase config JSON safely using fs
-const configPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
-const firebaseAppletConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+// Safely load firebase config JSON with a fallback if the file doesn't exist
+let firebaseAppletConfig: Record<string, any> = {};
+try {
+  const configPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
+  if (fs.existsSync(configPath)) {
+    firebaseAppletConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  }
+} catch (err) {
+  console.warn('Warning: firebase-applet-config.json could not be read. Falling back to environment variables.');
+}
 
 // Initialize Firebase SDK on server
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || firebaseAppletConfig.apiKey,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || firebaseAppletConfig.authDomain,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || firebaseAppletConfig.projectId,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || firebaseAppletConfig.storageBucket,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || firebaseAppletConfig.messagingSenderId,
-  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || firebaseAppletConfig.appId,
+  apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || firebaseAppletConfig.apiKey || '',
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || firebaseAppletConfig.authDomain || '',
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || firebaseAppletConfig.projectId || '',
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || firebaseAppletConfig.storageBucket || '',
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || firebaseAppletConfig.messagingSenderId || '',
+  appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || firebaseAppletConfig.appId || '',
   firestoreDatabaseId: firebaseAppletConfig.firestoreDatabaseId
 };
 
