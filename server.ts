@@ -17,7 +17,7 @@ import {
   runTransaction
 } from 'firebase/firestore';
 
-import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth';
+import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth.js';
 import firebaseAppletConfig from './firebase-applet-config.json';
 
 // Initialize Firebase SDK on server
