@@ -1,4 +1,4 @@
-import { validatePasscode, generateAdminToken } from '../_auth';
+import { validatePasscode, generateAdminToken } from '../_auth.js';
 
 export default async function handler(req: any, res: any) {
   // Ensure strict application/json content-type header
@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    let body = req.body;import { validatePasscode, generateAdminToken } from '../_auth';
+    let body = req.body;import { validatePasscode, generateAdminToken } from '../_auth.js';
 
 export default async function handler(req: any, res: any) {
   // Ensure strict application/json content-type header
