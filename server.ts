@@ -339,8 +339,8 @@ async function startServer() {
   const PORT = Number(process.env.PORT) || 3000;
 
   if (process.env.NODE_ENV !== 'production') {
-    // Dynamically import Vite only during development to avoid Rollup serverless errors
-    const { createServer: createViteServer } = await import('vite');
+    // Use eval import so the bundler completely ignores Vite/Rollup during serverless builds
+    const { createServer: createViteServer } = await (eval(`import('vite')`) as Promise<any>);
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
