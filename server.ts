@@ -18,7 +18,7 @@ import {
 } from 'firebase/firestore';
 
 import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth.js';
-import firebaseAppletConfig from './firebase-applet-config.json';
+import firebaseAppletConfig from './firebase-applet-config.json' with { type: 'json' };
 
 // Initialize Firebase SDK on server
 const firebaseConfig = {
