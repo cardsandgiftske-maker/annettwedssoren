@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
 import { initializeApp, getApps, getApp } from 'firebase/app';
@@ -18,7 +19,10 @@ import {
 } from 'firebase/firestore';
 
 import { validatePasscode, generateAdminToken, verifyAdminToken } from './api/_auth.js';
-import firebaseAppletConfig from './firebase-applet-config.json' with { type: 'json' };
+
+// Load firebase config JSON safely using fs
+const configPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
+const firebaseAppletConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 // Initialize Firebase SDK on server
 const firebaseConfig = {
@@ -225,15 +229,15 @@ app.post('/api/admin/check-in', requireAdmin, async (req, res) => {
       const checkedInAt = new Date().toISOString();
       transaction.update(guestRef, { checkInStatus: 'used', checkedInAt });
       return {
-  status: 'granted' as const,
-  guest: {
-    ...guest,
-    fullName: guest.fullName as string,
-    eCardCode: guest.eCardCode as string,
-    checkInStatus: 'used',
-    checkedInAt
-  }
-};
+        status: 'granted' as const,
+        guest: {
+          ...guest,
+          fullName: guest.fullName as string,
+          eCardCode: guest.eCardCode as string,
+          checkInStatus: 'used',
+          checkedInAt
+        }
+      };
     });
     if (result.status === 'granted') return res.status(200).json({ success: true, status: result.status, message: 'ACCESS GRANTED', guest: { fullName: result.guest.fullName, eCardCode: result.guest.eCardCode, checkedInAt: result.guest.checkedInAt } });
     if (result.status === 'used') return res.status(409).json({ success: false, status: 'used', message: 'ALREADY USED — ACCESS DENIED', guest: { fullName: result.guest.fullName, eCardCode: result.guest.eCardCode, checkedInAt: result.guest.checkedInAt } });
