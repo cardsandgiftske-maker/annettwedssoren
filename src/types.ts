@@ -1,0 +1,31 @@
+export interface RsvpGuest {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  willAttend: 'yes' | 'no';
+  adultsCount: number;
+  childrenCount: number;
+  songRequest?: string;
+  submittedAt: string;
+  eCardCode: string;
+  qrToken?: string;
+  checkedInAt?: string | null;
+  checkInStatus?: 'unused' | 'used';
+  notes?: string;
+}
+
+export interface ProgramItem {
+  time: string;
+  title: string;
+  duration?: string;
+  description?: string;
+  bullets?: string[];
+  isChurch?: boolean;
+}
+
+export interface ColorSwatch {
+  name: string;
+  hex: string;
+  textColor: string;
+  description: string;
+}
