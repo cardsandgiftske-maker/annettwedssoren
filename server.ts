@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
-import { createServer as createViteServer } from 'vite';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getFirestore,
@@ -46,11 +45,6 @@ const appInstance = getApps().length === 0 ? initializeApp(firebaseConfig) : get
 const db = getFirestore(appInstance, firebaseConfig.firestoreDatabaseId);
 const COLLECTION_NAME = 'rsvps';
 
-// Normalizes phone numbers for duplicate checks
-function normalizePhone(phone: string): string {
-  return phone.replace(/[\s\-\(\)\.]/g, '').trim();
-}
-
 const app = express();
 
 // JSON request body parser
@@ -68,9 +62,8 @@ app.post('/api/rsvp', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const { fullName, phoneNumber, willAttend, notes, songRequest, eCardCode, id, submittedAt } = req.body;
+    const { fullName, phoneNumber, willAttend, notes, songRequest, id, submittedAt } = req.body;
 
-    // 1. Validation
     if (!fullName || typeof fullName !== 'string' || fullName.trim().length === 0) {
       return res.status(400).json({ success: false, error: 'Full name is required.' });
     }
@@ -179,7 +172,6 @@ app.post('/api/rsvp', async (req, res) => {
 // ADMIN AUTHENTICATION & MANAGEMENT ENDPOINTS
 // ==========================================
 
-// Admin login endpoint
 app.post('/api/admin/login', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   const { passcode } = req.body || {};
@@ -195,7 +187,6 @@ app.post('/api/admin/login', (req, res) => {
   return res.status(200).json({ success: true, token });
 });
 
-// Admin middleware: enforces valid session token
 const requireAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   res.setHeader('Content-Type', 'application/json');
   const authHeader = req.headers.authorization;
@@ -211,7 +202,6 @@ const requireAdmin = (req: express.Request, res: express.Response, next: express
   next();
 };
 
-// Validate and consume a one-time guest QR token (Admin Only).
 app.post('/api/admin/check-in', requireAdmin, async (req, res) => {
   try {
     const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
@@ -256,7 +246,6 @@ app.post('/api/admin/check-in', requireAdmin, async (req, res) => {
   }
 });
 
-// Get all RSVPs (Admin Only)
 app.get('/api/admin/rsvps', requireAdmin, async (req, res) => {
   try {
     const q = query(collection(db, COLLECTION_NAME), orderBy('submittedAt', 'desc'));
@@ -273,7 +262,6 @@ app.get('/api/admin/rsvps', requireAdmin, async (req, res) => {
   }
 });
 
-// Update RSVP status or guest counts (Admin Only)
 const handleUpdateRsvp = async (req: express.Request, res: express.Response) => {
   try {
     const id = (req.params.id || req.query.id || req.body?.id) as string;
@@ -306,7 +294,6 @@ const handleUpdateRsvp = async (req: express.Request, res: express.Response) => 
 app.patch('/api/admin/rsvps', requireAdmin, handleUpdateRsvp);
 app.patch('/api/admin/rsvps/:id', requireAdmin, handleUpdateRsvp);
 
-// Delete an RSVP (Admin Only)
 const handleDeleteRsvp = async (req: express.Request, res: express.Response) => {
   try {
     const id = (req.params.id || req.query.id || req.body?.id) as string;
@@ -324,7 +311,6 @@ const handleDeleteRsvp = async (req: express.Request, res: express.Response) => 
 app.delete('/api/admin/rsvps', requireAdmin, handleDeleteRsvp);
 app.delete('/api/admin/rsvps/:id', requireAdmin, handleDeleteRsvp);
 
-// Get aggregated stats (Admin Only)
 app.get('/api/admin/stats', requireAdmin, async (req, res) => {
   try {
     const snap = await getDocs(collection(db, COLLECTION_NAME));
@@ -353,6 +339,8 @@ async function startServer() {
   const PORT = Number(process.env.PORT) || 3000;
 
   if (process.env.NODE_ENV !== 'production') {
+    // Dynamically import Vite only during development to avoid Rollup serverless errors
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
@@ -366,7 +354,6 @@ async function startServer() {
     });
   }
 
-  // Only start listening locally if not running on Vercel serverless
   if (!process.env.VERCEL) {
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on http://0.0.0.0:${PORT}`);
@@ -378,5 +365,4 @@ startServer().catch((err) => {
   console.error('Server failed to start:', err);
 });
 
-// CRITICAL: Export app for Vercel serverless functions
 export default app;
