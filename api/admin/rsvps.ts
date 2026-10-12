@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { db, COLLECTION_NAME } from '../_firebase';
-import { verifyAdminToken } from '../_auth';
+import { verifyAdminToken } from '../_auth.js';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Content-Type', 'application/json');
