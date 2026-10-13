@@ -4,7 +4,8 @@ import crypto from 'crypto';
 const AUTH_SECRET =
   process.env.ADMIN_SESSION_SECRET ||
   'annett-soren-wedding-2026-admin-portal-key';
-
+// Default couple passcode if ADMIN_PASSCODE environment variable is not explicitly set
+const DEFAULT_PASSCODE = 'annettsoren2026';
 
 
 /**
