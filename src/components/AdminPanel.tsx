@@ -310,7 +310,7 @@ export default function AdminPanel() {
                       <button
                         type="button"
                         onClick={() => {
-                          setPasscode('annettsoren2026');
+                          setPasscode('sorann2026');
                           setAuthError('');
                         }}
                         className="font-mono text-[#14532D] font-bold underline hover:text-[#C9A227] cursor-pointer transition-colors"
