@@ -273,55 +273,37 @@ export default function AdminPanel() {
                       >
                         {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
-                    </div>
-
-                    {/* Error display */}
-                    {authError && (
-                      <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 text-left">
-                        <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                        <span>{authError}</span>
-                      </div>
-                    )}
-
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      disabled={isVerifying || !passcode.trim()}
-                      className="w-full bg-gradient-to-r from-[#14532D] to-[#1e6f3d] hover:from-[#114525] hover:to-[#175b32] text-white py-3 rounded-xl font-sans font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {isVerifying ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>Verifying Passcode...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Unlock className="w-4 h-4 text-amber-300" />
-                          <span>Unlock Portal</span>
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                 {/* Couple Quick-Help / Hint */}
-                  <div className="mt-6 pt-5 border-t border-stone-100 w-full text-center">
-                    <p className="text-[11px] text-stone-500 font-sans">
-                      Default couple passcode:{' '}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPasscode('sorann2026');
-                          setAuthError('');
-                        }}
-                        className="font-mono text-[#14532D] font-bold underline hover:text-[#C9A227] cursor-pointer transition-colors"
-                        title="Click to auto-fill passcode"
-                      >
-                        annettsoren2026
-                      </button>
-                    </p>
                   </div>
-                </div>
-              </motion.div>
+
+                  {/* Error display */}
+                  {authError && (
+                    <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 text-left">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                      <span>{authError}</span>
+                    </div>
+                  )}
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isVerifying || !passcode.trim()}
+                    className="w-full bg-gradient-to-r from-[#14532D] to-[#1e6f3d] hover:from-[#114525] hover:to-[#175b32] text-white py-3 rounded-xl font-sans font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isVerifying ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Verifying Passcode...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Unlock className="w-4 h-4 text-amber-300" />
+                        <span>Unlock Portal</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
             ) : ( 
               /* AUTHENTICATED DASHBOARD PANEL */
               <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
@@ -452,111 +434,109 @@ export default function AdminPanel() {
                           Declined
                         </button>
                       </div>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                      <button
-                        onClick={() => loadRsvps()}
-                        disabled={isLoadingData}
-                        className="px-3.5 py-2 bg-white border border-stone-200 hover:bg-stone-50 text-stone-600 hover:text-stone-900 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                        title="Reload Database"
-                      >
-                        <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? 'animate-spin' : ''}`} />
-                        <span>Refresh</span>
-                      </button>
-                      
-                      <button
-                        onClick={handleExportCSV}
-                        disabled={guests.length === 0}
-                        className="px-4 py-2 bg-[#14532D] hover:bg-[#0f3d21] text-white font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
-                      >
-                        <FileSpreadsheet className="w-4 h-4 text-amber-300" />
-                        <span>Export CSV</span>
-                      </button>
-                    </div>
                   </div>
 
-                  {/* Scrollable Guest Table/List */}
-                  <div className="border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
-                    <table className="w-full text-left text-xs border-collapse min-w-[650px]">
-                      <thead>
-                        <tr className="bg-stone-50 border-b border-stone-200 text-stone-600 font-sans font-bold uppercase tracking-wider">
-                          <th className="p-4">Guest Name</th>
-                          <th className="p-4">Phone Number</th>
-                          <th className="p-4 text-center">Attendance</th>
-                          <th className="p-4 text-center">E-Card Code</th>
-                          <th className="p-4">Notes / Wishes</th>
-                          <th className="p-4 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredGuests.length === 0 ? (
-                          <tr>
-                            <td colSpan={6} className="p-10 text-center text-stone-500 font-serif italic text-sm">
-                              {isLoadingData ? 'Loading RSVPs from database...' : 'No guest records found matching the search criteria.'}
-                            </td>
-                          </tr>
-                        ) : (
-                          filteredGuests.map((guest) => (
-                            <tr key={guest.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors">
-                              <td className="p-4">
-                                <div className="font-serif font-semibold text-stone-900 text-sm">{guest.fullName}</div>
-                                <div className="text-[10px] text-stone-400 font-mono mt-0.5">
-                                  {new Date(guest.submittedAt).toLocaleDateString('en-KE', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </div>
-                              </td>
-                              <td className="p-4 font-mono text-stone-600">{guest.phoneNumber}</td>
-                              <td className="p-4 text-center">
-                                <button
-                                  onClick={() => handleToggleAttendance(guest.id)}
-                                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-sans font-bold text-[9px] uppercase tracking-wider border cursor-pointer ${
-                                    guest.willAttend === 'yes'
-                                      ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                                      : 'bg-stone-100 border-stone-200 text-stone-600'
-                                  }`}
-                                  title="Click to toggle status"
-                                >
-                                  {guest.willAttend === 'yes' ? 'Attending' : 'Declined'}
-                                </button>
-                              </td>
-                              <td className="p-4 text-center font-mono font-bold text-[#14532D] tracking-wider">
-                                {guest.eCardCode}
-                              </td>
-                              <td className="p-4 text-stone-600 italic max-w-xs truncate" title={guest.notes}>
-                                {guest.notes || <span className="text-stone-300">None</span>}
-                              </td>
-                              <td className="p-4 text-right">
-                                <button
-                                  onClick={() => handleDelete(guest.id)}
-                                  className="p-2 bg-white hover:bg-rose-50 text-stone-400 hover:text-rose-700 border border-stone-200 hover:border-rose-300 rounded-lg transition-all cursor-pointer"
-                                  title="Delete Entry"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Footer Stats summary */}
-                  <div className="text-[10px] text-stone-500 text-center font-sans">
-                    Showing {filteredGuests.length} of {guests.length} total registrations. Protected couple administrative portal.
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                    <button
+                      onClick={() => loadRsvps()}
+                      disabled={isLoadingData}
+                      className="px-3.5 py-2 bg-white border border-stone-200 hover:bg-stone-50 text-stone-600 hover:text-stone-900 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="Reload Database"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? 'animate-spin' : ''}`} />
+                      <span>Refresh</span>
+                    </button>
+                    
+                    <button
+                      onClick={handleExportCSV}
+                      disabled={guests.length === 0}
+                      className="px-4 py-2 bg-[#14532D] hover:bg-[#0f3d21] text-white font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 text-amber-300" />
+                      <span>Export CSV</span>
+                    </button>
                   </div>
                 </div>
+
+                {/* Scrollable Guest Table/List */}
+                <div className="border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
+                  <table className="w-full text-left text-xs border-collapse min-w-[650px]">
+                    <thead>
+                      <tr className="bg-stone-50 border-b border-stone-200 text-stone-600 font-sans font-bold uppercase tracking-wider">
+                        <th className="p-4">Guest Name</th>
+                        <th className="p-4">Phone Number</th>
+                        <th className="p-4 text-center">Attendance</th>
+                        <th className="p-4 text-center">E-Card Code</th>
+                        <th className="p-4">Notes / Wishes</th>
+                        <th className="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredGuests.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-10 text-center text-stone-500 font-serif italic text-sm">
+                            {isLoadingData ? 'Loading RSVPs from database...' : 'No guest records found matching the search criteria.'}
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredGuests.map((guest) => (
+                          <tr key={guest.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+                            <td className="p-4">
+                              <div className="font-serif font-semibold text-stone-900 text-sm">{guest.fullName}</div>
+                              <div className="text-[10px] text-stone-400 font-mono mt-0.5">
+                                {new Date(guest.submittedAt).toLocaleDateString('en-KE', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            </td>
+                            <td className="p-4 font-mono text-stone-600">{guest.phoneNumber}</td>
+                            <td className="p-4 text-center">
+                              <button
+                                onClick={() => handleToggleAttendance(guest.id)}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-sans font-bold text-[9px] uppercase tracking-wider border cursor-pointer ${
+                                  guest.willAttend === 'yes'
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                                    : 'bg-stone-100 border-stone-200 text-stone-600'
+                                }`}
+                                title="Click to toggle status"
+                              >
+                                {guest.willAttend === 'yes' ? 'Attending' : 'Declined'}
+                              </button>
+                            </td>
+                            <td className="p-4 text-center font-mono font-bold text-[#14532D] tracking-wider">
+                              {guest.eCardCode}
+                            </td>
+                            <td className="p-4 text-stone-600 italic max-w-xs truncate" title={guest.notes}>
+                              {guest.notes || <span className="text-stone-300">None</span>}
+                            </td>
+                            <td className="p-4 text-right">
+                              <button
+                                onClick={() => handleDelete(guest.id)}
+                                className="p-2 bg-white hover:bg-rose-50 text-stone-400 hover:text-rose-700 border border-stone-200 hover:border-rose-300 rounded-lg transition-all cursor-pointer"
+                                title="Delete Entry"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+              {/* Footer Stats summary */}
+              <div className="text-[10px] text-stone-500 text-center font-sans">
+                Showing {filteredGuests.length} of {guests.length} total registrations. Protected couple administrative portal.
+              </div>
+            </div>
+          )}
+        </motion.div>
+      )}
     </>
   );
 }
