@@ -303,8 +303,7 @@ export default function AdminPanel() {
                     </button>
                   </form>
 
-                
-            ) : (
+                  
               /* AUTHENTICATED DASHBOARD PANEL */
               <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
                 {/* Header */}
