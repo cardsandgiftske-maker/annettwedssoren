@@ -303,25 +303,7 @@ export default function AdminPanel() {
                     </button>
                   </form>
 
-                  {/* Couple Quick-Help / Hint */}
-                  <div className="mt-6 pt-5 border-t border-stone-100 w-full text-center">
-                    <p className="text-[11px] text-stone-500 font-sans">
-                      Default couple passcode:{' '}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPasscode('sorann2026');
-                          setAuthError('');
-                        }}
-                        className="font-mono text-[#14532D] font-bold underline hover:text-[#C9A227] cursor-pointer transition-colors"
-                        title="Click to auto-fill passcode"
-                      >
-                        annettsoren2026
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+                
             ) : (
               /* AUTHENTICATED DASHBOARD PANEL */
               <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
