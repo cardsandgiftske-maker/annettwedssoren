@@ -224,55 +224,55 @@ export default function AdminPanel() {
                 className="bg-white border border-stone-200 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative p-8 my-8 text-stone-900"
               >
                 {/* Close Button */}
-                <button
+              <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-5 right-5 p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                   title="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+              >
+                <X className="w-5 h-5" />
+              </button>
 
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#14532D]/15 to-[#C9A227]/20 border border-[#C9A227]/40 flex items-center justify-center text-[#14532D] mb-4 shadow-sm">
-                    <Key className="w-8 h-8 text-[#14532D]" />
-                  </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#14532D]/15 to-[#C9A227]/20 border border-[#C9A227]/40 flex items-center justify-center text-[#14532D] mb-4 shadow-sm">
+                  <Key className="w-8 h-8 text-[#14532D]" />
+                </div>
 
-                  <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-[#C9A227] bg-[#C9A227]/10 px-3 py-1 rounded-full mb-2">
-                    Private Couple Access
-                  </span>
+                <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-[#C9A227] bg-[#C9A227]/10 px-3 py-1 rounded-full mb-2">
+                  Private Couple Access
+                </span>
 
-                  <h3 className="font-serif text-2xl text-stone-900 font-bold mb-1">
-                    Couple Admin Portal
-                  </h3>
-                  <p className="text-xs text-stone-600 font-sans max-w-xs leading-relaxed mb-6">
-                    Enter the secret passcode to access guest RSVPs, responses, and attendance records.
-                  </p>
+                <h3 className="font-serif text-2xl text-stone-900 font-bold mb-1">
+                  Couple Admin Portal
+                </h3>
+                <p className="text-xs text-stone-600 font-sans max-w-xs leading-relaxed mb-6">
+                  Enter the secret passcode to access guest RSVPs, responses, and attendance records.
+                </p>
 
-                  {/* Passcode Form */}
-                  <form onSubmit={handleUnlock} className="w-full space-y-4">
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-                        <Lock className="w-4 h-4" />
-                      </div>
-                      <input
-                        type={showPasscode ? 'text' : 'password'}
-                        value={passcode}
-                        onChange={(e) => {
-                          setPasscode(e.target.value);
-                          if (authError) setAuthError('');
-                        }}
-                        placeholder="Enter admin passcode"
-                        autoFocus
-                        className="w-full bg-stone-50 border border-stone-300 focus:border-[#14532D] focus:ring-2 focus:ring-[#14532D]/15 rounded-xl pl-10 pr-11 py-3 text-sm text-stone-900 placeholder:text-stone-400 outline-none transition-all font-mono tracking-wider"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPasscode(!showPasscode)}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
-                        title={showPasscode ? 'Hide passcode' : 'Show passcode'}
-                      >
-                        {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
+                {/* Passcode Form */}
+                <form onSubmit={handleUnlock} className="w-full space-y-4">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      type={showPasscode ? 'text' : 'password'}
+                      value={passcode}
+                      onChange={(e) => {
+                        setPasscode(e.target.value);
+                        if (authError) setAuthError('');
+                      }}
+                      placeholder="Enter admin passcode"
+                      autoFocus
+                      className="w-full bg-stone-50 border border-stone-300 focus:border-[#14532D] focus:ring-2 focus:ring-[#14532D]/15 rounded-xl pl-10 pr-11 py-3 text-sm text-stone-900 placeholder:text-stone-400 outline-none transition-all font-mono tracking-wider"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasscode(!showPasscode)}
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
+                      title={showPasscode ? 'Hide passcode' : 'Show passcode'}
+                    >
+                      {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
 
                   {/* Error display */}
@@ -304,136 +304,136 @@ export default function AdminPanel() {
                 </form>
               </div>
             </motion.div>
-            ) : ( 
-              /* AUTHENTICATED DASHBOARD PANEL */
-              <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
-                {/* Header */}
-                <div className="border-b border-stone-100 p-6 flex items-center justify-between bg-[#FCFAF7]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
-                      <Shield className="w-5 h-5 text-[#14532D]" />
+          ) : ( 
+            /* AUTHENTICATED DASHBOARD PANEL */
+            <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
+              {/* Header */}
+              <div className="border-b border-stone-100 p-6 flex items-center justify-between bg-[#FCFAF7]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+                    <Shield className="w-5 h-5 text-[#14532D]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-serif text-xl text-stone-900 font-medium">Guest RSVP Dashboard</h3>
+                      {isFirebaseConfigured ? (
+                        <span className="flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
+                          Cloud Live
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-[8px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
+                          Sandbox
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-stone-500 font-sans">Annett &amp; Søren Wedding RSVP Database</p>
+                  </div>
+                </div>
+                
+                {/* Lock Portal & Close */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleLockPortal}
+                    className="px-3 py-1.5 bg-stone-100 hover:bg-rose-50 text-stone-600 hover:text-rose-700 border border-stone-200 hover:border-rose-200 rounded-xl text-xs font-sans font-medium transition-all flex items-center gap-1.5 cursor-pointer"
+                    title="Lock portal and require passcode again"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Lock Portal</span>
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                    title="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Dashboard Panel Content */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-1 flex flex-col">
+                {/* Authorized live QR scanner and one-time entry validation */}
+                <CheckInScanner adminToken={adminToken} />
+
+                {/* Dashboard stats cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Stat 1 */}
+                  <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-[#14532D]/10 text-[#14532D] flex items-center justify-center shrink-0">
+                      <Users className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-serif text-xl text-stone-900 font-medium">Guest RSVP Dashboard</h3>
-                        {isFirebaseConfigured ? (
-                          <span className="flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
-                            Cloud Live
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1 text-[8px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
-                            Sandbox
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-stone-500 font-sans">Annett &amp; Søren Wedding RSVP Database</p>
+                      <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Total RSVPs</p>
+                      <p className="text-xl font-semibold font-serif text-stone-900">{totalRsvps}</p>
                     </div>
                   </div>
-                  
-                  {/* Lock Portal & Close */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleLockPortal}
-                      className="px-3 py-1.5 bg-stone-100 hover:bg-rose-50 text-stone-600 hover:text-rose-700 border border-stone-200 hover:border-rose-200 rounded-xl text-xs font-sans font-medium transition-all flex items-center gap-1.5 cursor-pointer"
-                      title="Lock portal and require passcode again"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Lock Portal</span>
-                    </button>
-                    <button
-                      onClick={() => setIsOpen(false)}
-                      className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
-                      title="Close"
-                    >
+
+                  {/* Stat 2 */}
+                  <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                      <CheckCircle className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Attending</p>
+                      <p className="text-xl font-semibold font-serif text-stone-900">{totalAttending}</p>
+                    </div>
+                  </div>
+
+                  {/* Stat 3 */}
+                  <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
                       <X className="w-5 h-5" />
-                    </button>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Declined</p>
+                      <p className="text-xl font-semibold font-serif text-stone-900">{totalDeclined}</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Dashboard Panel Content */}
-                <div className="p-6 overflow-y-auto space-y-6 flex-1 flex flex-col">
-                  {/* Authorized live QR scanner and one-time entry validation */}
-                  <CheckInScanner adminToken={adminToken} />
-
-                  {/* Dashboard stats cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Stat 1 */}
-                    <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
-                      <div className="w-10 h-10 rounded-xl bg-[#14532D]/10 text-[#14532D] flex items-center justify-center shrink-0">
-                        <Users className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Total RSVPs</p>
-                        <p className="text-xl font-semibold font-serif text-stone-900">{totalRsvps}</p>
-                      </div>
+                {/* Filter and Action Header */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2">
+                  {/* Search and Filters */}
+                  <div className="flex flex-wrap items-center gap-3 w-full md:w-auto flex-1">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 max-w-sm min-w-[200px]">
+                      <Search className="absolute left-3.5 top-3 w-4 h-4 text-stone-400" />
+                      <input
+                        type="text"
+                        placeholder="Search guest by name or phone..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-stone-50 border border-stone-200 focus:border-[#14532D] rounded-xl pl-10 pr-4 py-2 text-xs text-stone-800 outline-none transition-colors"
+                      />
                     </div>
 
-                    {/* Stat 2 */}
-                    <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                        <CheckCircle className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Attending</p>
-                        <p className="text-xl font-semibold font-serif text-stone-900">{totalAttending}</p>
-                      </div>
+                    {/* Filter Pills */}
+                    <div className="inline-flex bg-stone-50 border border-stone-200 rounded-lg p-1 text-xs">
+                      <button
+                        onClick={() => setAttendanceFilter('all')}
+                        className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                          attendanceFilter === 'all' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                      >
+                        All
+                      </button>
+                      <button
+                        onClick={() => setAttendanceFilter('yes')}
+                        className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                          attendanceFilter === 'yes' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                      >
+                        Attending
+                      </button>
+                      <button
+                        onClick={() => setAttendanceFilter('no')}
+                        className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                          attendanceFilter === 'no' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
+                        }`}
+                      >
+                        Declined
+                      </button>
                     </div>
-
-                    {/* Stat 3 */}
-                    <div className="bg-[#FCFAF7] border border-stone-200 p-4 rounded-2xl flex items-center gap-3 shadow-xs">
-                      <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">
-                        <X className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-stone-500 uppercase font-sans font-bold">Declined</p>
-                        <p className="text-xl font-semibold font-serif text-stone-900">{totalDeclined}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Filter and Action Header */}
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2">
-                    {/* Search and Filters */}
-                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto flex-1">
-                      {/* Search Bar */}
-                      <div className="relative flex-1 max-w-sm min-w-[200px]">
-                        <Search className="absolute left-3.5 top-3 w-4 h-4 text-stone-400" />
-                        <input
-                          type="text"
-                          placeholder="Search guest by name or phone..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full bg-stone-50 border border-stone-200 focus:border-[#14532D] rounded-xl pl-10 pr-4 py-2 text-xs text-stone-800 outline-none transition-colors"
-                        />
-                      </div>
-
-                      {/* Filter Pills */}
-                      <div className="inline-flex bg-stone-50 border border-stone-200 rounded-lg p-1 text-xs">
-                        <button
-                          onClick={() => setAttendanceFilter('all')}
-                          className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'all' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
-                          }`}
-                        >
-                          All
-                        </button>
-                        <button
-                          onClick={() => setAttendanceFilter('yes')}
-                          className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'yes' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
-                          }`}
-                        >
-                          Attending
-                        </button>
-                        <button
-                          onClick={() => setAttendanceFilter('no')}
-                          className={`px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
-                            attendanceFilter === 'no' ? 'bg-[#14532D] text-white font-bold' : 'text-stone-600 hover:text-stone-900'
-                          }`}
-                        >
-                          Declined
-                        </button>
-                      </div>
                   </div>
 
                   {/* Action buttons */}
@@ -447,7 +447,7 @@ export default function AdminPanel() {
                       <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? 'animate-spin' : ''}`} />
                       <span>Refresh</span>
                     </button>
-                    
+                     
                     <button
                       onClick={handleExportCSV}
                       disabled={guests.length === 0}
@@ -525,18 +525,20 @@ export default function AdminPanel() {
                           </tr>
                         ))
                       )}
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+                </div>
 
-              {/* Footer Stats summary */}
-              <div className="text-[10px] text-stone-500 text-center font-sans">
-                Showing {filteredGuests.length} of {guests.length} total registrations. Protected couple administrative portal.
-              </div>
+                {/* Footer Stats summary */}
+                <div className="text-[10px] text-stone-500 text-center font-sans">
+                  Showing {filteredGuests.length} of {guests.length} total registrations. Protected couple administrative portal.
+                </div>
             </div>
-          )}
+          </div>
+        )}
         </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }
