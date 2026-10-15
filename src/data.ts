@@ -16,7 +16,7 @@ export const WEDDING_DETAILS = {
   },
   parents: {
     groomParents: 'Mr. Hans Kolind',
-    brideParents: 'Mr. & Mrs. Koskei',
+    brideParents: 'Mr. and Mrs. Charles Koskei',
   },
   ceremony: {
     time: '9:00 AM onwards',
