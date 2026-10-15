@@ -459,8 +459,60 @@ export default function AdminPanel() {
                   </div>
                 </div>
 
-                {/* Scrollable Guest Table/List */}
-                <div className="border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
+                {/* Mobile-friendly RSVP cards: every record can be reviewed without horizontal scrolling */}
+                <div className="md:hidden border border-stone-200 bg-white rounded-2xl overflow-y-auto shadow-inner max-h-[55vh]">
+                  {filteredGuests.length === 0 ? (
+                    <div className="p-8 text-center text-stone-500 text-sm">
+                      {isLoadingData ? 'Loading RSVPs from database...' : 'No guest records found matching the search criteria.'}
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-stone-100">
+                      {filteredGuests.map((guest) => (
+                        <article key={guest.id} className="p-4 space-y-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <h4 className="font-serif font-semibold text-stone-900 text-base break-words">{guest.fullName}</h4>
+                              <p className="text-xs text-stone-500 mt-1">{guest.phoneNumber}</p>
+                              <p className="text-[10px] text-stone-400 mt-1">
+                                {new Date(guest.submittedAt).toLocaleString('en-KE', { dateStyle: 'medium', timeStyle: 'short' })}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => handleDelete(guest.id)}
+                              className="shrink-0 p-2 bg-white hover:bg-rose-50 text-stone-400 hover:text-rose-700 border border-stone-200 rounded-lg"
+                              title="Delete Entry"
+                              aria-label={`Delete RSVP for ${guest.fullName}`}
+                            ><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <p className="text-stone-400 uppercase tracking-wide text-[10px] mb-1">Attendance</p>
+                              <button
+                                onClick={() => handleToggleAttendance(guest.id)}
+                                className={`px-3 py-1.5 rounded-full font-bold text-[10px] uppercase border ${
+                                  guest.willAttend === 'yes'
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                                    : 'bg-stone-100 border-stone-200 text-stone-600'
+                                }`}
+                              >{guest.willAttend === 'yes' ? 'Attending' : 'Declined'}</button>
+                            </div>
+                            <div>
+                              <p className="text-stone-400 uppercase tracking-wide text-[10px] mb-1">E-card code</p>
+                              <p className="font-mono font-bold text-[#14532D] break-all">{guest.eCardCode || '—'}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-stone-400 uppercase tracking-wide text-[10px] mb-1">Notes / Wishes</p>
+                            <p className="text-sm text-stone-600 whitespace-pre-wrap break-words">{guest.notes || 'None'}</p>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden md:block border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
                   <table className="w-full text-left text-xs border-collapse min-w-[650px]">
                     <thead>
                       <tr className="bg-stone-50 border-b border-stone-200 text-stone-600 font-sans font-bold uppercase tracking-wider">
