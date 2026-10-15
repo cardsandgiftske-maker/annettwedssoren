@@ -213,7 +213,7 @@ export default function AdminPanel() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-stone-950/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 bg-stone-950/75 backdrop-blur-md flex items-start md:items-center justify-center p-2 sm:p-4 overflow-y-auto"
           >
             {/* PASSCODE BARRIER SCREEN */}
             {!isAuthenticated ? (
@@ -306,7 +306,7 @@ export default function AdminPanel() {
             </motion.div>
           ) : ( 
             /* AUTHENTICATED DASHBOARD PANEL */
-            <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden relative flex flex-col my-8 max-h-[90vh]">
+            <div className="bg-white border border-stone-200 rounded-3xl w-full max-w-4xl shadow-2xl overflow-y-auto relative flex flex-col my-2 sm:my-8 max-h-[96dvh] md:max-h-[90vh]">
               {/* Header */}
               <div className="border-b border-stone-100 p-6 flex items-center justify-between bg-[#FCFAF7]">
                 <div className="flex items-center gap-3">
@@ -460,7 +460,7 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Mobile-friendly RSVP cards: every record can be reviewed without horizontal scrolling */}
-                <div className="md:hidden border border-stone-200 bg-white rounded-2xl overflow-y-auto shadow-inner max-h-[55vh]">
+                <div className="border border-stone-200 bg-white rounded-2xl overflow-y-auto shadow-inner max-h-[45dvh] sm:max-h-[55vh] min-h-[180px]">
                   {filteredGuests.length === 0 ? (
                     <div className="p-8 text-center text-stone-500 text-sm">
                       {isLoadingData ? 'Loading RSVPs from database...' : 'No guest records found matching the search criteria.'}
@@ -512,7 +512,7 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Desktop table */}
-                <div className="hidden md:block border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
+                <div className="hidden border border-stone-200 bg-white rounded-2xl overflow-hidden flex-1 overflow-x-auto shadow-inner max-h-[400px]">
                   <table className="w-full text-left text-xs border-collapse min-w-[650px]">
                     <thead>
                       <tr className="bg-stone-50 border-b border-stone-200 text-stone-600 font-sans font-bold uppercase tracking-wider">
