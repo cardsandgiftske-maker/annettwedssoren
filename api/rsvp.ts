@@ -10,6 +10,16 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ success: false, error: 'Method Not Allowed. Expected POST.' });
   }
 
+  // Temporary maintenance mode while the Firestore quota issue is resolved.
+  const RSVP_TEMPORARILY_UNAVAILABLE = true;
+  if (RSVP_TEMPORARILY_UNAVAILABLE) {
+    return res.status(503).json({
+      success: false,
+      code: 'RSVP_TEMPORARILY_UNAVAILABLE',
+      error: 'RSVP submissions are temporarily unavailable. Please check back after 1:00 PM East Africa Time (EAT) on Sunday, 18 October 2026.'
+    });
+  }
+
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
     const { fullName, phoneNumber, willAttend, notes, songRequest, eCardCode, id, submittedAt } = body;
