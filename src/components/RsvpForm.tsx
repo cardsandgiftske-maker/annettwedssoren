@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Baby,
   Calendar,
+  Clock,
   MapPin,
   Download,
 } from 'lucide-react';
@@ -23,6 +24,9 @@ import { saveRsvp, isFirebaseConfigured } from '../lib/firebase';
 import Crest from './Crest';
 import { QRCodeSVG } from 'qrcode.react';
 import { toPng } from 'html-to-image';
+
+// Temporary maintenance notice for the current Firestore quota incident.
+const RSVP_TEMPORARILY_UNAVAILABLE = true;
 
 export default function RsvpForm() {
   const [fullName, setFullName] = useState('');
@@ -213,7 +217,30 @@ export default function RsvpForm() {
           </div>
 
           <AnimatePresence mode="wait">
-            {submittedGuest ? (
+            {RSVP_TEMPORARILY_UNAVAILABLE ? (
+              <motion.div
+                key="rsvp-temporarily-unavailable"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35 }}
+                role="status"
+                aria-live="polite"
+                className="bg-white border-2 border-[#C9A227]/70 p-6 md:p-10 rounded-3xl shadow-xl text-center text-stone-900 relative overflow-hidden max-w-2xl mx-auto"
+              >
+                <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-[#14532D] via-[#C9A227] to-[#D9CAAE]" />
+                <div className="w-14 h-14 bg-amber-50 border border-[#C9A227]/60 text-[#855802] rounded-full flex items-center justify-center mx-auto mb-4 mt-2">
+                  <Clock className="w-7 h-7" />
+                </div>
+                <p className="text-[10px] uppercase font-sans font-bold tracking-[0.25em] text-[#855802] mb-2">Temporary Maintenance</p>
+                <h3 className="font-serif text-2xl md:text-3xl font-semibold text-[#14532D] mb-4">RSVP Is Temporarily Unavailable</h3>
+                <div className="w-16 h-px bg-[#C9A227]/50 mx-auto mb-5" />
+                <p className="text-sm md:text-base leading-relaxed text-stone-700 max-w-lg mx-auto">
+                  We are carrying out a short maintenance update to our RSVP system. Please check back after <strong>1:00 PM East Africa Time (EAT) on Sunday, 18 October 2026</strong>.
+                </p>
+                <p className="text-sm text-stone-600 mt-3 font-serif italic">Thank you for your patience and understanding.</p>
+              </motion.div>
+            ) : submittedGuest ? (
               /* WARM & ELEGANT RSVP SUCCESS EXPERIENCE WITH PERSONALIZED ENTRANCE PASS */
               <motion.div
                 key="rsvp-submitted-success"
@@ -531,7 +558,7 @@ export default function RsvpForm() {
 
       {/* Floating RSVP Button */}
       <AnimatePresence>
-        {showFloatingBtn && (
+        {showFloatingBtn && !RSVP_TEMPORARILY_UNAVAILABLE && (
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
