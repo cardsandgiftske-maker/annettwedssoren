@@ -1,20 +1,18 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Annett & Soren Wedding Website
 
-# Run and deploy your AI Studio app
+This project is configured for the standard Firebase project `annettandsorenwedding` and its `(default)` Firestore database. The previous AI Studio database and Diana & Charles' project are not changed by this repository.
 
-This contains everything you need to run your app locally.
+## Current safety status
 
-View your app in AI Studio: https://ai.studio/apps/d85ef035-841f-4106-bffe-c0486c59e422
+RSVP maintenance is intentionally enabled until the new database is configured, the exported guest CSV is imported, and the RSVP/admin/check-in flows are tested. Do not reopen submissions before those checks pass.
 
-## Run Locally
+## Local setup
 
-**Prerequisites:**  Node.js
+1. Install dependencies with `npm install`.
+2. Set the Firebase Admin service-account credentials and project ID as described in [MIGRATION-README.md](./MIGRATION-README.md).
+3. Run `npm run dev`.
+4. The `/api/health` endpoint reports the configured project ID and maintenance status.
 
+## Firebase migration
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Follow [MIGRATION-README.md](./MIGRATION-README.md) before deploying. The CSV export does not contain QR token hashes or check-in history, so imported guests must recover their e-cards to receive new QR tokens.
