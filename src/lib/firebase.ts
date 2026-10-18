@@ -1,35 +1,6 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, doc, getDocs, collection, getDocFromServer, query } from 'firebase/firestore';
 import { RsvpGuest } from '../types';
-import firebaseAppletConfig from '../../firebase-applet-config.json';
 
 export const isFirebaseConfigured = true;
-
-// Firebase Client Configuration
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseAppletConfig.apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseAppletConfig.authDomain,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseAppletConfig.projectId,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseAppletConfig.storageBucket,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseAppletConfig.messagingSenderId,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseAppletConfig.appId,
-  firestoreDatabaseId: firebaseAppletConfig.firestoreDatabaseId
-};
-
-const appInstance = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-export const clientDb = getFirestore(appInstance, firebaseConfig.firestoreDatabaseId);
-export const db = clientDb;
-
-async function testConnection() {
-  try {
-    await getDocFromServer(doc(clientDb, 'test', 'connection'));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error('Please check your Firebase configuration.');
-    }
-  }
-}
-testConnection();
 
 /**
  * Validates and strictly sanitizes an RSVP object to guarantee that
@@ -99,121 +70,68 @@ export function buildValidatedRsvp(raw: Partial<RsvpGuest>): RsvpGuest {
 }
 
 /**
- * Submit an RSVP. Attempts the secure backend API endpoint first;
- * if unavailable (e.g. static CDN 404), falls back to direct client Firestore creation.
- * Throws clear error without writing to localStorage on failure.
+ * Submit an RSVP through the server API only. No direct Firestore fallback is allowed;
+ * the server owns duplicate checks and QR-token issuance. Same name + phone recovers an existing e-card.
  */
-export async function saveRsvp(rsvpInput: Partial<RsvpGuest>): Promise<{ success: boolean; rsvp: RsvpGuest; updated?: boolean }> {
-  // Validate and sanitize beforehand so no undefined property ever exists
+export async function saveRsvp(rsvpInput: Partial<RsvpGuest>): Promise<{ success: boolean; rsvp: RsvpGuest; recovered?: boolean; updated?: boolean }> {
   const validatedRsvp = buildValidatedRsvp(rsvpInput);
-  let apiSucceeded = false;
-  let resultData: any = null;
+  const response = await fetch('/api/rsvp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(validatedRsvp),
+  });
 
-  try {
-    const response = await fetch('/api/rsvp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(validatedRsvp),
-    });
-
-    const contentType = response.headers.get('content-type') || '';
-    const rawText = await response.text();
-
-    if (contentType.includes('application/json')) {
-      try {
-        const data = JSON.parse(rawText);
-        if (response.ok && data.success) {
-          apiSucceeded = true;
-          resultData = data;
-        } else if (!response.ok) {
-          throw new Error(data.error || `Server returned status ${response.status}`);
-        }
-      } catch (jsonErr: any) {
-        if (!response.ok) {
-          throw new Error(jsonErr.message || 'Server error occurred.');
-        }
-      }
-    }
-  } catch (apiErr: any) {
-    console.warn('Secure RSVP API request failed:', apiErr.message);
+  const contentType = response.headers.get('content-type') || '';
+  const rawText = await response.text();
+  if (!contentType.includes('application/json')) {
+    throw new Error('The RSVP service returned an unexpected response. Please try again later.');
   }
 
-  if (apiSucceeded && resultData) {
-    return resultData;
+  let data: any;
+  try { data = JSON.parse(rawText); } catch { throw new Error('The RSVP service returned an invalid response. Please try again later.'); }
+  if (!response.ok || !data.success) {
+    throw new Error(data.error || `Unable to submit RSVP (HTTP ${response.status}).`);
   }
-
-  throw new Error('Secure RSVP service is unavailable. Please try again shortly; your invitation QR must be issued by the server.');
+  return data;
 }
 
 /**
  * Authenticate admin with passcode and obtain a secure session token
  */
 export async function adminLogin(passcode: string): Promise<{ success: boolean; token: string }> {
-  try {
-    const response = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ passcode }),
-    });
-
-    const data = await response.json();
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || 'Incorrect passcode. Access denied.');
-    }
-    return data;
-  } catch (err: any) {
-    // If backend route is temporarily unreachable in dev/static preview, verify against default
-    if (err?.message?.includes('Incorrect passcode')) {
-      throw err;
-    }
-    const cleanPass = (passcode || '').trim().toLowerCase();
-    if (cleanPass === 'annettsoren2026' || cleanPass === 'annettsoren' || cleanPass === 'annett&soren') {
-      return { success: true, token: 'local-session-authorized' };
-    }
-    throw new Error(err?.message || 'Incorrect passcode. Please enter the couple portal passcode.');
+  const response = await fetch('/api/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ passcode }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.success || !data.token) {
+    throw new Error(data.error || 'Admin login is unavailable. Please try again.');
   }
+  return data;
 }
 
 /**
- * Fetch all RSVPs for admin dashboard (works with or without token)
+ * Fetch RSVP records through the authenticated server API only. No client-side Firestore fallback.
  */
 export async function getAdminRsvps(token?: string): Promise<RsvpGuest[]> {
-  try {
-    const response = await fetch('/api/admin/rsvps', {
-      method: 'GET',
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
+  const response = await fetch('/api/admin/rsvps', {
+    method: 'GET',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+  });
 
-    const contentType = response.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) {
-      const data = await response.json();
-      if (response.ok && data.rsvps) {
-        return data.rsvps;
-      }
-    }
-  } catch (err) {
-    console.warn('API /api/admin/rsvps fetch fallback to direct query:', err);
+  const contentType = response.headers.get('content-type') || '';
+  const rawText = await response.text();
+  if (!contentType.includes('application/json')) {
+    throw new Error('Server returned an invalid response when fetching RSVPs.');
   }
 
-  // Fallback direct Firestore query if backend endpoint unreachable
-  try {
-    const q = query(collection(clientDb, 'rsvps'));
-    const snap = await getDocs(q);
-    const guests: RsvpGuest[] = [];
-    snap.forEach((docSnap) => {
-      guests.push(docSnap.data() as RsvpGuest);
-    });
-    return guests.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
-  } catch (err: any) {
-    console.error('Error fetching RSVPs from Firestore:', err);
-    throw new Error('Failed to retrieve RSVP records.');
+  let data: any;
+  try { data = JSON.parse(rawText); } catch { throw new Error('Invalid JSON received while fetching RSVPs.'); }
+  if (!response.ok || !data.success || !Array.isArray(data.rsvps)) {
+    throw new Error(data.error || 'Failed to retrieve RSVP records.');
   }
+  return data.rsvps as RsvpGuest[];
 }
 
 /**
