@@ -26,7 +26,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 
 // Temporary maintenance notice for the current Firestore quota incident.
-const RSVP_TEMPORARILY_UNAVAILABLE = true;
+const RSVP_TEMPORARILY_UNAVAILABLE = false;
 
 export default function RsvpForm() {
   const [fullName, setFullName] = useState('');
