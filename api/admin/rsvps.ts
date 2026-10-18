@@ -1,3 +1,4 @@
+// LEGACY ROUTE NOTE: vercel.json sends /api/* requests to server.ts. Keep server.ts as the active API implementation.
 import { collection, doc, getDoc, getDocs, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { db, COLLECTION_NAME } from '../_firebase';
 import { verifyAdminToken } from '../_auth.js';
