@@ -1,12 +1,12 @@
 {
-  "projectId": "artful-climber-hgtt6",
-  "appId": "1:915772485910:web:5ae691bbb39162a17ee037",
-  "apiKey": "AIzaSyCABtw3Z2QBaBKdjnJTp9VCTWUYgs9pt-A",
-  "authDomain": "artful-climber-hgtt6.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-annettsoreninvit-d85ef035-841f-4106-bffe-c0486c59e422",
-  "storageBucket": "artful-climber-hgtt6.firebasestorage.app",
-  "messagingSenderId": "915772485910",
+  "projectId": "annettandsorenwedding",
+  "appId": "1:112216813556:web:370b819a8d9aac76fa13a1",
+  "apiKey": "AIzaSyAu3rH8fsjaSadFXlL6xsq7_JQx8VFopKE",
+  "authDomain": "annettandsorenwedding.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "annettandsorenwedding.firebasestorage.app",
+  "messagingSenderId": "112216813556",
   "measurementId": "",
-  "oAuthClientId": "915772485910-833qf3rhgjkfbse3jql1oa3sd56okgjk.apps.googleusercontent.com",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
