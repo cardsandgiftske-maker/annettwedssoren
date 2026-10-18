@@ -14,15 +14,13 @@ const DEFAULT_PASSCODE = 'annettsoren2026';
 export function validatePasscode(passcode: unknown): boolean {
   if (!passcode || typeof passcode !== 'string') return false;
 
-  const expected = (process.env.ADMIN_PASSCODE || DEFAULT_PASSCODE).trim().toLowerCase();
+  const configuredPasscode = process.env.ADMIN_PASSCODE;
+  const expected = (configuredPasscode || DEFAULT_PASSCODE).trim().toLowerCase();
   const entered = passcode.trim().toLowerCase();
 
-  return (
-    entered === expected ||
-    entered === DEFAULT_PASSCODE ||
-    entered === 'annettsoren' ||
-    entered === 'annett&soren'
-  );
+  // Once a custom passcode is configured, do not continue accepting the defaults.
+  if (configuredPasscode) return entered === expected;
+  return entered === expected || entered === 'annettsoren' || entered === 'annett&soren';
 }
 
 /**
