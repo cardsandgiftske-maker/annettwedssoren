@@ -1,6 +1,8 @@
-
 node_modules/
 dist/
 .env
 .env.local
 .env.*.local
+serviceAccountKey.json
+*service-account*.json
+annett_and_soren_wedding_rsvps_*.csv
