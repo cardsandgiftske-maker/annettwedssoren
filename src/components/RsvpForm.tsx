@@ -36,6 +36,7 @@ export default function RsvpForm() {
 
   const [loading, setLoading] = useState(false);
   const [submittedGuest, setSubmittedGuest] = useState<RsvpGuest | null>(null);
+  const [wasRecovered, setWasRecovered] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [codeCopied, setCodeCopied] = useState(false);
   const [downloadingCard, setDownloadingCard] = useState(false);
@@ -46,13 +47,8 @@ export default function RsvpForm() {
   const [showFloatingBtn, setShowFloatingBtn] = useState(true);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('as_confirmed_rsvp_guest');
-      if (saved) {
-        setSubmittedGuest(JSON.parse(saved));
-      }
-    } catch {}
-
+    // Do not restore a cached QR pass after a refresh. The server must revalidate
+    // the guest's exact name and phone and issue a current QR token.
     const handleScroll = () => {
       const rsvpSection = document.getElementById('rsvp-section');
       if (rsvpSection) {
@@ -120,19 +116,8 @@ export default function RsvpForm() {
       return;
     }
 
-    const rawDigits = phoneNumber.replace(/\D/g, '');
-    const targetDigits = rawDigits.length >= 9 ? rawDigits.slice(-9) : rawDigits;
-
-    let usedPhones: string[] = [];
-    try {
-      usedPhones = JSON.parse(localStorage.getItem('as_used_rsvp_phones') || '[]');
-    } catch {}
-
-    if (usedPhones.includes(targetDigits)) {
-      setErrorMessage('This phone number has already been used to confirm attendance. Each phone number can only confirm once.');
-      return;
-    }
-
+    // Do not block from localStorage: the server must check whether this is a genuine
+    // duplicate or the original guest recovering an e-card after refresh/device change.
     setLoading(true);
 
     try {
@@ -153,14 +138,8 @@ export default function RsvpForm() {
       const response = await saveRsvp(newGuest);
       const finalGuest = response?.rsvp || newGuest;
 
+      setWasRecovered(Boolean(response?.recovered));
       setSubmittedGuest(finalGuest);
-
-      // Prevent phone reuse and retain confirmed gate pass
-      try {
-        localStorage.setItem('as_confirmed_rsvp_guest', JSON.stringify(finalGuest));
-        const updatedPhones = Array.from(new Set([...usedPhones, targetDigits]));
-        localStorage.setItem('as_used_rsvp_phones', JSON.stringify(updatedPhones));
-      } catch {}
 
       setLoading(false);
 
@@ -236,7 +215,7 @@ export default function RsvpForm() {
                 <h3 className="font-serif text-2xl md:text-3xl font-semibold text-[#14532D] mb-4">RSVP Is Temporarily Unavailable</h3>
                 <div className="w-16 h-px bg-[#C9A227]/50 mx-auto mb-5" />
                 <p className="text-sm md:text-base leading-relaxed text-stone-700 max-w-lg mx-auto">
-                  We are carrying out a short maintenance update to our RSVP system. Please check back after <strong>1:00 PM East Africa Time (EAT) on Sunday, 18 October 2026</strong>.
+                  We are carrying out a short maintenance update to our RSVP system. Please check back shortly. We will reopen RSVPs once maintenance and data checks are complete.
                 </p>
                 <p className="text-sm text-stone-600 mt-3 font-serif italic">Thank you for your patience and understanding.</p>
               </motion.div>
@@ -263,11 +242,11 @@ export default function RsvpForm() {
                 </div>
 
                 <p className="text-[10px] uppercase font-sans font-bold tracking-[0.25em] text-[#855802] mb-1">
-                  Confirmation Received
+                  {wasRecovered ? 'Existing RSVP Found' : 'Confirmation Received'}
                 </p>
 
                 <h3 className="font-serif text-2xl md:text-3xl font-semibold text-[#14532D] mb-4">
-                  RSVP SUBMITTED SUCCESSFULLY
+                  {wasRecovered ? 'YOUR E-CARD IS READY AGAIN' : 'RSVP SUBMITTED SUCCESSFULLY'}
                 </h3>
 
                 <div className="w-16 h-px bg-[#C9A227]/50 mx-auto mb-6" />
@@ -275,7 +254,7 @@ export default function RsvpForm() {
                 {submittedGuest.willAttend === 'yes' ? (
                   <div className="space-y-4">
                     <p className="text-base md:text-lg text-stone-800 font-serif">
-                      Thank you dearly, <span className="font-bold text-[#14532D]">{submittedGuest.fullName}</span>! We look forward to celebrating this glorious day with you.
+                      {wasRecovered ? (<>Welcome back, <span className="font-bold text-[#14532D]">{submittedGuest.fullName}</span>. We found your original RSVP and restored your e-card for download.</>) : (<>Thank you dearly, <span className="font-bold text-[#14532D]">{submittedGuest.fullName}</span>! We look forward to celebrating this glorious day with you.</>)}
                     </p>
 
                     {/* PERSONALIZED GATE ENTRANCE PASS CARD */}
