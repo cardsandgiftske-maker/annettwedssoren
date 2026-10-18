@@ -1,3 +1,4 @@
+// LEGACY ROUTE NOTE: vercel.json sends /api/* requests to server.ts. Keep server.ts as the active API implementation.
 import crypto from 'crypto';
 import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { db, COLLECTION_NAME } from './_firebase';
@@ -8,16 +9,6 @@ export default async function handler(req: any, res: any) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method Not Allowed. Expected POST.' });
-  }
-
-  // Temporary maintenance mode while the Firestore quota issue is resolved.
-  const RSVP_TEMPORARILY_UNAVAILABLE = true;
-  if (RSVP_TEMPORARILY_UNAVAILABLE) {
-    return res.status(503).json({
-      success: false,
-      code: 'RSVP_TEMPORARILY_UNAVAILABLE',
-      error: 'RSVP submissions are temporarily unavailable. Please check back after 1:00 PM East Africa Time (EAT) on Sunday, 18 October 2026.'
-    });
   }
 
   try {
