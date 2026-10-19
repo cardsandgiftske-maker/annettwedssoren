@@ -34,10 +34,7 @@ export default function DressCode() {
             We kindly invite our guests to celebrate with us in colourful, vibrant and elegant attires.
           </p>
 
-          <p className="text-xs uppercase tracking-widest font-sans font-bold text-[#14532D]">
-            Theme Colors: <span className="text-[#14532D]">Green</span> &amp; <span className="text-[#8C7A5B]">Beige</span>
-          </p>
-
+        
           <div className="pt-4 border-t border-stone-200 flex items-center justify-center gap-2 text-stone-600 text-xs font-serif italic">
             <Heart className="w-4 h-4 text-[#C9A227] fill-[#C9A227]/20" />
             <span>We look forward to sharing this picturesque, elegant day with you!</span>
