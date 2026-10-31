@@ -1,99 +1,3 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { MapPin, Gift, Shirt, Sparkles, Mail, ChevronUp, Clock } from 'lucide-react';
-import Hero from './components/Hero';
-import ProgramSchedule from './components/ProgramSchedule';
-import DressCode from './components/DressCode';
-import Gifting from './components/Gifting';
-import LocationMap from './components/LocationMap';
-import RsvpForm from './components/RsvpForm';
-import AdminPanel from './components/AdminPanel';
-import Envelope from './components/Envelope';
-import MusicPlayer from './components/MusicPlayer';
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState('hero-section');
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isEnvelopeOpened, setIsEnvelopeOpened] = useState(false);
-  const [shouldPlayMusic, setShouldPlayMusic] = useState(false);
-
-  // Lock body scroll while the envelope is closed
-  useEffect(() => {
-    if (!isEnvelopeOpened) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isEnvelopeOpened]);
-
-  const handleEnvelopeOpen = () => {
-    setIsEnvelopeOpened(true);
-  };
-
-  // Monitor scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.5) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-
-      const sections = ['hero-section', 'maps-section', 'program-section', 'dress-code-section', 'gifting-section', 'rsvp-section'];
-      const scrollPosition = window.scrollY + window.innerHeight * 0.4;
-
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const top = element.offsetTop;
-          const height = element.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const navItems = [
-    { id: 'hero-section', label: 'Welcome', icon: Sparkles },
-    { id: 'maps-section', label: 'Venue', icon: MapPin },
-    { id: 'program-section', label: 'Program', icon: Clock },
-    { id: 'dress-code-section', label: 'Attire', icon: Shirt },
-    { id: 'gifting-section', label: 'Gifting', icon: Gift },
-    { id: 'rsvp-section', label: 'RSVP', icon: Mail },
-  ];
-
-  return (
-    <>
-      <MusicPlayer shouldPlay={shouldPlayMusic} />
-      
-      <AnimatePresence mode="wait">
-        {!isEnvelopeOpened && (
-          <Envelope 
-            onOpen={handleEnvelopeOpen} 
-            onSealBreak={() => setShouldPlayMusic(true)} 
-          />
-        )}
-      </AnimatePresence>
-
-      {isEnvelopeOpened && (
-        <motion.div 
-          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="relative min-h-screen bg-[#071F11] text-stone-100 font-sans selection:bg-[#C9A227]/30 selection:text-white overflow-x-hidden antialiased"
@@ -140,6 +44,15 @@ export default function App() {
             >
               RSVP NOW
             </button>
+
+            {/* Admin Portal Direct Access */}
+            <button
+              onClick={() => scrollToSection('admin-panel')}
+              className="px-3 md:px-4 py-2 bg-[#14532D] hover:bg-[#1B6B3A] border border-[#C9A227]/70 text-[#F5D77F] font-sans font-extrabold text-[9px] md:text-[10px] uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>Admin Portal</span>
+            </button>
           </div>
         </header>
 
@@ -154,7 +67,9 @@ export default function App() {
         </main>
 
         {/* Couple Administrative Database Section */}
-        <AdminPanel />
+        <div id="admin-panel">
+          <AdminPanel />
+        </div>
 
         {/* Desktop Vertical Indicator Navigation Dots (Right Edge) */}
         <div className="hidden lg:flex fixed right-8 top-1/2 -translate-y-1/2 z-40 flex-col gap-5 items-center">
