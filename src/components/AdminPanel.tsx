@@ -203,11 +203,11 @@ export default function AdminPanel({ openSignal = 0 }: AdminPanelProps) {
             <Shield className="w-3.5 h-3.5 text-amber-400" />
             <span>Couple Admin Portal</span>
             {isAuthenticated ? (
-              <span className="text-[9px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/40 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-wider uppercase flex items-center gap-1">
+              <span className="text-[9px] bg-emerald-950/80 text-emerald-300 border border-emerald-800/40 px-1.5 py-0.5 rounded-full font-mono font-bold tracking-wider uppercase flex items-center gap-1">
                 <Unlock className="w-2.5 h-2.5" /> Unlocked
               </span>
             ) : (
-              <span className="text-[9px] bg-amber-950/80 text-amber-300 border border-amber-800/40 px-1.5 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-wider uppercase flex items-center gap-1">
+              <span className="text-[9px] bg-amber-950/80 text-amber-300 border border-amber-800/40 px-1.5 py-0.5 rounded-full font-mono font-bold tracking-wider uppercase flex items-center gap-1">
                 <Lock className="w-2.5 h-2.5" /> Protected
               </span>
             )}
@@ -233,58 +233,67 @@ export default function AdminPanel({ openSignal = 0 }: AdminPanelProps) {
                 className="bg-white border border-stone-200 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative p-8 my-8 text-stone-900"
               >
                 {/* Close Button */}
-              <button
+                <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-5 right-5 p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                   title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+                >
+                  <X className="w-5 h-5" />
+                </button>
 
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#14532D]/15 to-[#C9A227]/20 border border-[#C9A227]/40 flex items-center justify-center text-[#14532D] mb-4 shadow-sm">
-                  <Key className="w-8 h-8 text-[#14532D]" />
-                </div>
-
-                <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-[#C9A227] bg-[#C9A227]/10 px-3 py-1 rounded-full mb-2">
-                  Private Couple Access
-                </span>
-
-                <h3 className="font-serif text-2xl text-stone-900 font-bold mb-1">
-                  Couple Admin Portal
-                </h3>
-                <p className="text-xs text-stone-600 font-sans max-w-xs leading-relaxed mb-6">
-                  Enter the secret passcode to access guest RSVPs, responses, and attendance records.
-                </p>
-
-                {/* Passcode Form */}
-                <form onSubmit={handleUnlock} className="w-full space-y-4">
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-                      <Lock className="w-4 h-4" />
-                    </div>
-                    <input
-                      type={showPasscode ? 'text' : 'password'}
-                      value={passcode}
-                      onChange={(e) => {
-                        setPasscode(e.target.value);
-                        if (authError) setAuthError('');
-                      }}
-                      placeholder="Enter admin passcode"
-                      autoFocus
-                      className="w-full bg-stone-50 border border-stone-300 focus:border-[#14532D] focus:ring-2 focus:ring-[#14532D]/15 rounded-xl pl-10 pr-11 py-3 text-sm text-stone-900 placeholder:text-stone-400 outline-none transition-all font-mono tracking-wider"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPasscode(!showPasscode)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
-                      title={showPasscode ? 'Hide passcode' : 'Show passcode'}
-                    >
-                      {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#14532D]/15 to-[#C9A227]/20 border border-[#C9A227]/40 flex items-center justify-center text-[#14532D] mb-4 shadow-sm">
+                    <Key className="w-8 h-8 text-[#14532D]" />
                   </div>
 
-                  {/* Error display */}
-                  {authError && (
-                    <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 text-left">
-                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-[#C9A227] bg-[#C9A227]/10 px-3 py-1 rounded-full mb-2">
+                    Private Couple Access
+                  </span>
+
+                  <h3 className="font-serif text-2xl text-stone-900 font-bold mb-1">
+                    Couple Admin Portal
+                  </h3>
+                  <p className="text-xs text-stone-600 font-sans max-w-xs leading-relaxed mb-6">
+                    Enter the secret passcode to access guest RSVPs, responses, and attendance records.
+                  </p>
+
+                  {/* Passcode Form */}
+                  <form onSubmit={handleUnlock} className="w-full space-y-4">
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                        <Lock className="w-4 h-4" />
+                      </div>
+                      <input
+                        type={showPasscode ? 'text' : 'password'}
+                        value={passcode}
+                        onChange={(e) => {
+                          setPasscode(e.target.value);
+                          if (authError) setAuthError('');
+                        }}
+                        placeholder="Enter admin passcode"
+                        autoFocus
+                        className="w-full bg-stone-50 border border-stone-300 focus:border-[#14532D] focus:ring-2 focus:ring-[#14532D]/15 rounded-xl pl-10 pr-11 py-3 text-sm text-stone-900 placeholder:text-stone-400 outline-none transition-all font-mono tracking-wider"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasscode(!showPasscode)}
+                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
+                        title={showPasscode ? 'Hide passcode' : 'Show passcode'}
+                      >
+                        {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+
+                    {/* Error display */}
+                    {authError && (
+                      <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 text-left">
+                        <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                        <span>{authError}</span>
+                      </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={isVerifying || !passcode.trim()}
+                      className="w-full bg-gradient-to-r from-[#14532D] to-[#1e6f3d] hover:from-[#114525] hover:to-[#175b32] text-white py-3 rounded-xl font-sans font-bold text
