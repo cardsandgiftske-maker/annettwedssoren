@@ -27,8 +27,8 @@ import {
   isFirebaseConfigured 
 } from '../lib/firebase';
 
-export default function AdminPanel() {
-  const [isOpen, setIsOpen] = useState(false);
+interface AdminPanelProps {\n  openSignal?: number;\n}\n\nexport default function AdminPanel({ openSignal = 0 }: AdminPanelProps) {
+  const [isOpen, setIsOpen] = useState(false);\n\n  // Open the admin modal directly when requested from the top navigation.\n  useEffect(() => {\n    if (openSignal > 0) setIsOpen(true);\n  }, [openSignal]);
   const [guests, setGuests] = useState<RsvpGuest[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
