@@ -27,8 +27,17 @@ import {
   isFirebaseConfigured 
 } from '../lib/firebase';
 
-interface AdminPanelProps {\n  openSignal?: number;\n}\n\nexport default function AdminPanel({ openSignal = 0 }: AdminPanelProps) {
-  const [isOpen, setIsOpen] = useState(false);\n\n  // Open the admin modal directly when requested from the top navigation.\n  useEffect(() => {\n    if (openSignal > 0) setIsOpen(true);\n  }, [openSignal]);
+interface AdminPanelProps {
+  openSignal?: number;
+}
+
+export default function AdminPanel({ openSignal = 0 }: AdminPanelProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Open the admin modal directly when requested from the top navigation.
+  useEffect(() => {
+    if (openSignal > 0) setIsOpen(true);
+  }, [openSignal]);
   const [guests, setGuests] = useState<RsvpGuest[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -150,7 +159,8 @@ interface AdminPanelProps {\n  openSignal?: number;\n}\n\nexport default functio
       g.submittedAt,
     ]);
 
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('
+');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
