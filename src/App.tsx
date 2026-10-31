@@ -17,6 +17,7 @@ export default function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isEnvelopeOpened, setIsEnvelopeOpened] = useState(false);
   const [shouldPlayMusic, setShouldPlayMusic] = useState(false);
+  const [adminOpenSignal, setAdminOpenSignal] = useState(0);
 
   // Lock body scroll while the envelope is closed
   useEffect(() => {
@@ -144,7 +145,7 @@ export default function App() {
 
             {/* Admin Portal Direct Access */}
             <button
-              onClick={() => scrollToSection('admin-panel')}
+              onClick={() => setAdminOpenSignal((current) => current + 1)}
               className="px-3 md:px-4 py-2 bg-[#14532D] hover:bg-[#1B6B3A] border border-[#C9A227]/70 text-[#F5D77F] font-sans font-extrabold text-[9px] md:text-[10px] uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md flex items-center gap-1.5 whitespace-nowrap"
             >
               <Shield className="w-3.5 h-3.5" />
@@ -165,7 +166,7 @@ export default function App() {
 
         {/* Couple Administrative Database Section */}
         <div id="admin-panel">
-          <AdminPanel />
+          <AdminPanel openSignal={adminOpenSignal} />
         </div>
 
         {/* Desktop Vertical Indicator Navigation Dots (Right Edge) */}
